@@ -3,6 +3,4 @@ target/
 
 **/*.rs.bk
 
-# Added by cargo
-
-/target
+docs/.obsidian/
