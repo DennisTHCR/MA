@@ -1,9 +1,11 @@
 #![allow(dead_code)]
 // https://easings.net/ and https://github.com/semitable/easing-functions/blob/master/easing_functions/easing.py for reference
 
+use bevy::reflect::Reflect;
 use easer::functions::*;
 
 /// The Ease struct is used to get more natural values for e.g. animations.
+#[derive(Reflect)]
 pub struct EaseStruct {
     pub current_step: u16,
     pub total_steps: u16,
@@ -51,7 +53,7 @@ impl EaseStruct {
 }
 
 /// Easing functions enum
-#[derive(Debug)]
+#[derive(Reflect)]
 pub enum EasingFunction {
     Sine,
     Quad,
@@ -66,7 +68,7 @@ pub enum EasingFunction {
 }
 
 /// Easing types enum.
-#[derive(Debug)]
+#[derive(Reflect)]
 pub enum EasingType {
     In,
     Out,

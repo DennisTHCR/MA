@@ -10,8 +10,8 @@ impl Plugin for CameraPlugin {
 
         app.world.spawn(bundle);
 
-        app.insert_resource(GoalZoom::default())
-            .register_type::<GoalZoom>()
+        app.insert_resource(ZoomEase::default())
+            .register_type::<ZoomEase>()
             .insert_resource(Zoom::default())
             .register_type::<Zoom>()
             .insert_resource(ZoomEase::default())
@@ -30,9 +30,11 @@ fn update_zoom(
 }
 
 /// System that updates the Zoom resource to zoom smoothly. TODO: Add smoothing function (for now just updates the zoom immediately)
-fn update_zoom_resource(mut zoom: ResMut<Zoom>, goal_zoom: Res<GoalZoom>, mut zoom_ease: ResMut<ZoomEase>, time: Res<Time>) {
-    zoom.0 = 1. / (goal_zoom.0 * zoom_ease.0.progress_eased());
-    zoom_ease.0.increase(time.delta().as_millis() as u16);
+fn update_zoom_resource(mut zoom: ResMut<Zoom>, mut zoom_ease: ResMut<ZoomEase>, time: Res<Time>) {
+    zoom.0 = 1. / (zoom_ease.goal_zoom * zoom_ease.ease_struct.progress_eased());
+    zoom_ease
+        .ease_struct
+        .increase(time.delta().as_millis() as u16);
 }
 
 // Components and Resources
@@ -52,29 +54,23 @@ impl Default for Zoom {
     }
 }
 
-/// Changes Zoom level with easing function.
 #[derive(Reflect, Resource)]
 #[reflect(Resource)]
-pub struct GoalZoom(f32);
-
-impl Default for GoalZoom {
-    fn default() -> Self {
-        GoalZoom(Zoom::default().0)
-    }
+struct ZoomEase {
+    ease_struct: EaseStruct,
+    goal_zoom: f32,
 }
-
-#[derive(Resource)]
-struct ZoomEase(EaseStruct);
 
 impl Default for ZoomEase {
     fn default() -> Self {
-        ZoomEase(
-            EaseStruct {
+        ZoomEase {
+            ease_struct: EaseStruct {
                 current_step: 0,
                 total_steps: 500,
                 easing_function: EasingFunction::Back,
                 easing_type: EasingType::Out,
-            }
-        )
+            },
+            goal_zoom: Zoom::default().0,
+        }
     }
 }
