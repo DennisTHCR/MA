@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-mod camera;
+pub mod camera;
 
 pub struct GraphicsPlugin;
 

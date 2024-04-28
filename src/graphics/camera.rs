@@ -21,7 +21,7 @@ impl Plugin for CameraPlugin {
 
 // Systems
 
-/// System that changes Zoom level.
+/// System that changes the cameras zoom.
 fn update_zoom(
     mut projection: Query<&mut OrthographicProjection, With<CameraMarker>>,
     zoom: Res<Zoom>,
@@ -29,9 +29,17 @@ fn update_zoom(
     projection.single_mut().scale = zoom.0;
 }
 
-/// System that updates the Zoom resource to zoom smoothly. TODO: Add smoothing function (for now just updates the zoom immediately)
+/// System that updates the Zoom resource to zoom smoothly.
 fn update_zoom_resource(mut zoom: ResMut<Zoom>, mut zoom_ease: ResMut<ZoomEase>, time: Res<Time>) {
-    zoom.0 = 1. / (zoom_ease.goal_zoom * zoom_ease.ease_struct.progress_eased());
+    if zoom_ease.is_done() {
+        let goal_zoom = zoom_ease.goal_zoom;
+        zoom_ease.set_previous_zoom(goal_zoom);
+        return;
+    }
+    zoom.0 = 1.
+        / (zoom_ease.previous_zoom
+            + (zoom_ease.goal_zoom - zoom_ease.previous_zoom)
+                * zoom_ease.ease_struct.progress_eased());
     zoom_ease
         .ease_struct
         .increase(time.delta().as_millis() as u16);
@@ -54,11 +62,13 @@ impl Default for Zoom {
     }
 }
 
+/// Struct to handle zooming. Should only be accessed by implemented functions.
 #[derive(Reflect, Resource)]
 #[reflect(Resource)]
-struct ZoomEase {
+pub struct ZoomEase {
     ease_struct: EaseStruct,
     goal_zoom: f32,
+    previous_zoom: f32,
 }
 
 impl Default for ZoomEase {
@@ -67,10 +77,37 @@ impl Default for ZoomEase {
             ease_struct: EaseStruct {
                 current_step: 0,
                 total_steps: 500,
-                easing_function: EasingFunction::Back,
-                easing_type: EasingType::Out,
+                easing_function: EasingFunction::Sine,
+                easing_type: EasingType::InOut,
             },
             goal_zoom: Zoom::default().0,
+            previous_zoom: Zoom::default().0,
+        }
+    }
+}
+
+impl ZoomEase {
+    /// Returns whether the tweening is done or not.
+    pub fn is_done(&self) -> bool {
+        self.ease_struct.current_step == self.ease_struct.total_steps
+    }
+
+    /// Setter for previous zoom value.
+    fn set_previous_zoom(&mut self, zoom: f32) {
+        self.previous_zoom = zoom;
+    }
+
+    /// Only way you should interact with zoom level.
+    pub fn set_zoom(&mut self, goal_zoom: f32, easing_function: EasingFunction, easing_type: EasingType, time: u16) {
+        *self = ZoomEase {
+            ease_struct: EaseStruct {
+                current_step: 0,
+                total_steps: time,
+                easing_function: easing_function,
+                easing_type: easing_type,
+            },
+            goal_zoom,
+            previous_zoom: self.goal_zoom,
         }
     }
 }
