@@ -1,13 +1,13 @@
 :root {
-    --main-background-color: #353535;
-    --main-color: #ddd;
-    --settings-input-color: #2196f3;
-    --settings-input-border-color: #999;
+    --main-background-color: #1e1e2e;
+    --main-color: #cdd6f4;
+    --settings-input-color: #cba6f7;
+    --settings-input-border-color: #6c7086;
     --settings-button-color: #000;
     --settings-button-border-focus: #ffb900;
     --sidebar-background-color: #505050;
     --sidebar-background-color-hover: #676767;
-    --code-block-background-color: #2A2A2A;
+    --code-block-background-color: #181825;
     --scrollbar-track-background-color: #717171;
     --scrollbar-thumb-background-color: rgba(32,34,37,.6);
     --scrollbar-color: rgba(32,34,37,.6) #5a5a5a;
@@ -15,12 +15,12 @@
     --border-color: #e0e0e0;
     --button-background-color: #f0f0f0;
     --right-side-color: grey;
-    --code-attribute-color: #999;
-    --toggles-color: #999;
+    --code-attribute-color: #6c7086;
+    --toggles-color: #6c7086;
     --toggle-filter: invert(100%);
     --mobile-sidebar-menu-filter: invert(100%);
-    --search-input-focused-border-color: #008dfd;
-    --copy-path-button-color: #999;
+    --search-input-focused-border-color: #cba6f7;
+    --copy-path-button-color: #6c7086;
     --copy-path-img-filter: invert(50%);
     --copy-path-img-hover-filter: invert(65%);
     --codeblock-error-hover-color: rgb(255,0,0);
@@ -48,7 +48,7 @@
     --search-tab-button-not-selected-border-top-color: #252525;
     --search-tab-button-not-selected-background: #252525;
     --search-tab-button-selected-border-top-color: #0089ff;
-    --search-tab-button-selected-background: #353535;
+    --search-tab-button-selected-background: #1e1e2e;
     --stab-background-color: #314559;
     --stab-code-color: #e6e1cf;
     --code-highlight-kw-color: #ab8ac1;
@@ -82,9 +82,9 @@
     --crate-search-hover-border: #2196f3;
     --src-sidebar-background-selected: #333;
     --src-sidebar-background-hover: #444;
-    --table-alt-row-background-color: #2a2a2a;
+    --table-alt-row-background-color: #181825;
     --codeblock-link-background: #333;
-    --scrape-example-toggle-line-background: #999;
+    --scrape-example-toggle-line-background: #6c7086;
     --scrape-example-toggle-line-hover-background: #c5c5c5;
     --scrape-example-code-line-highlight: #5b3b01;
     --scrape-example-code-line-highlight-focus: #7c4b0f;
