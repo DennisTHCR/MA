@@ -49,7 +49,7 @@ fn update_zoom_resource(mut zoom: ResMut<Zoom>, mut zoom_ease: ResMut<ZoomEase>,
 
 /// Marks the main camera.
 #[derive(Component)]
-pub struct CameraMarker;
+struct CameraMarker;
 
 /// Sets zoom level immediately. Should not be accesssed directly.
 #[derive(Reflect, Resource)]
@@ -74,12 +74,7 @@ pub struct ZoomEase {
 impl Default for ZoomEase {
     fn default() -> Self {
         ZoomEase {
-            ease_struct: EaseStruct {
-                current_step: 0,
-                total_steps: 500,
-                easing_function: EasingFunction::Sine,
-                easing_type: EasingType::InOut,
-            },
+            ease_struct: EaseStruct::new(0, 500, EasingFunction::Sine, EasingType::InOut),
             goal_zoom: Zoom::default().0,
             previous_zoom: Zoom::default().0,
         }
@@ -89,7 +84,7 @@ impl Default for ZoomEase {
 impl ZoomEase {
     /// Returns whether the tweening is done or not.
     pub fn is_done(&self) -> bool {
-        self.ease_struct.current_step == self.ease_struct.total_steps
+        self.ease_struct.is_done()
     }
 
     /// Setter for previous zoom value.
@@ -98,16 +93,23 @@ impl ZoomEase {
     }
 
     /// Only way you should interact with zoom level.
-    pub fn set_zoom(&mut self, goal_zoom: f32, easing_function: EasingFunction, easing_type: EasingType, time: u16) {
+    pub fn set_zoom(
+        &mut self,
+        goal_zoom: f32,
+        easing_function: EasingFunction,
+        easing_type: EasingType,
+        time: u16,
+    ) {
         *self = ZoomEase {
-            ease_struct: EaseStruct {
-                current_step: 0,
-                total_steps: time,
-                easing_function: easing_function,
-                easing_type: easing_type,
-            },
+            ease_struct: EaseStruct::new(0, time, easing_function, easing_type),
             goal_zoom,
-            previous_zoom: self.goal_zoom,
+            previous_zoom: self.previous_zoom
+                + (self.goal_zoom - self.previous_zoom) * self.ease_struct.progress_eased(),
         }
+    }
+
+    pub fn force_zoom(&mut self, goal_zoom: f32) {
+        self.ease_struct.force_done();
+        self.goal_zoom = goal_zoom;
     }
 }

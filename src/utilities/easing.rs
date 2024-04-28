@@ -7,10 +7,10 @@ use easer::functions::*;
 /// The Ease struct is used to get more natural values for e.g. animations.
 #[derive(Reflect)]
 pub struct EaseStruct {
-    pub current_step: u16,
-    pub total_steps: u16,
-    pub easing_function: EasingFunction,
-    pub easing_type: EasingType,
+    current_step: u16,
+    total_steps: u16,
+    easing_function: EasingFunction,
+    easing_type: EasingType,
 }
 
 impl EaseStruct {
@@ -49,6 +49,28 @@ impl EaseStruct {
         if self.current_step > self.total_steps {
             self.current_step = self.total_steps
         }
+    }
+
+    pub fn new(
+        current_step: u16,
+        total_steps: u16,
+        easing_function: EasingFunction,
+        easing_type: EasingType,
+    ) -> Self {
+        EaseStruct {
+            current_step,
+            total_steps,
+            easing_function,
+            easing_type,
+        }
+    }
+
+    pub fn is_done(&self) -> bool {
+        self.current_step == self.total_steps
+    }
+
+    pub fn force_done(&mut self) {
+        self.current_step = self.total_steps;
     }
 }
 
