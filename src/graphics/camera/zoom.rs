@@ -1,21 +1,17 @@
-use crate::utilities::easing::*;
 use bevy::prelude::*;
+use crate::utilities::easing::*;
+use super::CameraMarker;
 
-/// Plugin that handles everything related to managing the camera.
-pub struct CameraPlugin;
+pub struct ZoomPlugin;
 
-impl Plugin for CameraPlugin {
+impl Plugin for ZoomPlugin {
     fn build(&self, app: &mut App) {
-        let bundle = (Camera2dBundle::default(), CameraMarker);
-
-        app.world.spawn(bundle);
-
         app.insert_resource(ZoomEase::default())
-            .register_type::<ZoomEase>()
-            .insert_resource(Zoom::default())
-            .register_type::<Zoom>()
-            .insert_resource(ZoomEase::default())
-            .add_systems(Update, (update_zoom_resource, update_zoom).chain());
+        .register_type::<ZoomEase>()
+        .insert_resource(Zoom::default())
+        .register_type::<Zoom>()
+        .insert_resource(ZoomEase::default())
+        .add_systems(Update, (update_zoom_resource, update_zoom).chain());
     }
 }
 
@@ -45,11 +41,7 @@ fn update_zoom_resource(mut zoom: ResMut<Zoom>, mut zoom_ease: ResMut<ZoomEase>,
         .increase(time.delta().as_millis() as u16);
 }
 
-// Components and Resources
-
-/// Marks the main camera.
-#[derive(Component)]
-struct CameraMarker;
+// Structs
 
 /// Sets zoom level immediately. Should not be accesssed directly.
 #[derive(Reflect, Resource)]
@@ -93,6 +85,7 @@ impl ZoomEase {
     }
 
     /// Only way you should interact with zoom level.
+    #[allow(dead_code)]
     pub fn set_zoom(
         &mut self,
         goal_zoom: f32,
@@ -108,6 +101,7 @@ impl ZoomEase {
         }
     }
 
+    #[allow(dead_code)]
     pub fn force_zoom(&mut self, goal_zoom: f32) {
         self.ease_struct.force_done();
         self.goal_zoom = goal_zoom;
