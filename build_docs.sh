@@ -1,1 +1,1 @@
-cargo rustdoc -- --theme ./doc_themes/catppuccin.css
+cargo rustdoc --open -- --theme ./doc_themes/catppuccin.css
