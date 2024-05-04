@@ -1,17 +1,17 @@
-mod graphics;
+mod camera;
 mod utilities;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use graphics::GraphicsPlugin;
+use camera::CameraPlugin;
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(ImagePlugin::default_nearest()),
-            GraphicsPlugin,
+            CameraPlugin,
             WorldInspectorPlugin::new(),
         ))
         .add_systems(Startup, (setup, sprite_test).chain())

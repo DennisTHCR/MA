@@ -9,13 +9,15 @@ use easer::functions::*;
 pub struct EaseStruct {
     current_step: u16,
     total_steps: u16,
+    start_val: f32,
+    end_val: f32,
     easing_function: EasingFunction,
     easing_type: EasingType,
 }
 
 impl EaseStruct {
     /// Returns a value between 0. and 1., going off of an EaseStruct. TODO: Implement easing functions.
-    pub fn progress_eased(&self) -> f32 {
+    pub fn get_progress_eased(&self) -> f32 {
         match self.easing_function {
             EasingFunction::Sine => ease_sine(self),
             EasingFunction::Quad => ease_quad(self),
@@ -41,7 +43,7 @@ impl EaseStruct {
         self.current_step += 1;
     }
 
-    pub fn increase(&mut self, amount: u16) {
+    pub fn increase_step(&mut self, amount: u16) {
         if self.current_step == self.total_steps {
             return;
         }
@@ -54,12 +56,16 @@ impl EaseStruct {
     pub fn new(
         current_step: u16,
         total_steps: u16,
+        start_val: f32,
+        end_val: f32,
         easing_function: EasingFunction,
         easing_type: EasingType,
     ) -> Self {
         EaseStruct {
             current_step,
             total_steps,
+            start_val,
+            end_val,
             easing_function,
             easing_type,
         }
@@ -71,6 +77,26 @@ impl EaseStruct {
 
     pub fn force_done(&mut self) {
         self.current_step = self.total_steps;
+    }
+
+    pub fn set_start_val(&mut self, start_val: f32) {
+        self.start_val = start_val;
+    }
+
+    pub fn set_end_val(&mut self, end_val: f32) {
+        self.end_val = end_val;
+    }
+
+    pub fn get_start_val(&self) -> f32 {
+        self.start_val
+    }
+
+    pub fn get_end_val(&self) -> f32 {
+        self.end_val
+    }
+
+    pub fn get_current_value(&self) -> f32 {
+        self.start_val + (self.end_val - self.start_val) * self.get_progress_eased()
     }
 }
 
