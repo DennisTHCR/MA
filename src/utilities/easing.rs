@@ -1,8 +1,17 @@
 #![allow(dead_code)]
-// https://easings.net/ and https://github.com/semitable/easing-functions/blob/master/easing_functions/easing.py for reference
 
-use bevy::reflect::Reflect;
+use bevy::prelude::*;
 use easer::functions::*;
+
+pub struct EasingPlugin;
+
+impl Plugin for EasingPlugin {
+    fn build(&self, app: &mut App) {
+        app
+            .register_type::<TimeEase>()
+            .add_systems(Update, update_time_ease);
+    }
+}
 
 /// The Ease struct is used to get more natural values for e.g. animations.
 #[derive(Reflect)]
@@ -13,6 +22,105 @@ pub struct EaseStruct {
     end_val: f32,
     easing_function: EasingFunction,
     easing_type: EasingType,
+}
+
+fn update_time_ease(mut time_eases: Query<&mut TimeEase>, time: Res<Time>) {
+    time_eases.iter_mut().for_each(|mut ease| {
+        if ease.is_done() {
+            let end_val = ease.get_end_val();
+            ease.set_previous_zoom(end_val);
+        } else {
+            ease.0.increase_step(time.delta().as_millis() as u16);
+        }
+    })
+}
+
+#[derive(Reflect, Component)]
+pub struct TimeEase(EaseStruct);
+
+impl TimeEase {
+    /// Returns whether the tweening is done or not.
+    pub fn is_done(&self) -> bool {
+        self.0.is_done()
+    }
+
+    /// Setter for previous zoom value.
+    fn set_previous_zoom(&mut self, zoom: f32) {
+        self.0.set_start_val(zoom);
+    }
+
+    /// Only way you should interact with zoom level.
+    #[allow(dead_code)]
+    pub fn set_zoom(
+        &mut self,
+        goal_zoom: f32,
+        easing_function: EasingFunction,
+        easing_type: EasingType,
+        ms: u16,
+    ) {
+        *self = TimeEase(EaseStruct::new(
+            0,
+            ms,
+            self.0.get_current_value(),
+            goal_zoom,
+            easing_function,
+            easing_type,
+        ))
+    }
+
+    #[allow(dead_code)]
+    pub fn force_zoom(&mut self, goal_zoom: f32) {
+        self.0.force_done();
+        self.0.set_end_val(goal_zoom);
+    }
+
+    pub fn get_end_val(&self) -> f32 {
+        self.0.get_end_val()
+    }
+
+    pub fn get_current_value(&self) -> f32 {
+        self.0.get_current_value()
+    }
+
+    pub fn increase_step(&mut self, amount: u16) {
+        self.0.increase_step(amount);
+    }
+
+    pub fn new(
+        current_step: u16,
+        total_steps: u16,
+        start_val: f32,
+        end_val: f32,
+        easing_function: EasingFunction,
+        easing_type: EasingType,
+    ) -> Self {
+        TimeEase(
+            EaseStruct::new(
+                current_step,
+                total_steps,
+                start_val,
+                end_val,
+                easing_function,
+                easing_type,
+            )
+        )
+    }
+
+    pub fn force_done(&mut self) {
+        self.0.force_done();
+    }
+
+    pub fn set_end_val(&mut self, end_val: f32) {
+        self.0.set_end_val(end_val);
+    }
+}
+
+impl Default for TimeEase {
+    fn default() -> Self {
+        TimeEase(
+            EaseStruct::new(1, 1, 1., 1., EasingFunction::Sine, EasingType::InOut)
+        )
+    }
 }
 
 impl EaseStruct {
