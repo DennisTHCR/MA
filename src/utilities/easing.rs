@@ -7,8 +7,7 @@ pub struct EasingPlugin;
 
 impl Plugin for EasingPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .register_type::<TimeEase>()
+        app.register_type::<TimeEase>()
             .add_systems(Update, update_time_ease);
     }
 }
@@ -94,16 +93,14 @@ impl TimeEase {
         easing_function: EasingFunction,
         easing_type: EasingType,
     ) -> Self {
-        TimeEase(
-            EaseStruct::new(
-                current_step,
-                total_steps,
-                start_val,
-                end_val,
-                easing_function,
-                easing_type,
-            )
-        )
+        TimeEase(EaseStruct::new(
+            current_step,
+            total_steps,
+            start_val,
+            end_val,
+            easing_function,
+            easing_type,
+        ))
     }
 
     pub fn force_done(&mut self) {
@@ -117,9 +114,14 @@ impl TimeEase {
 
 impl Default for TimeEase {
     fn default() -> Self {
-        TimeEase(
-            EaseStruct::new(1, 1, 1., 1., EasingFunction::Sine, EasingType::InOut)
-        )
+        TimeEase(EaseStruct::new(
+            1,
+            1,
+            1.,
+            1.,
+            EasingFunction::Sine,
+            EasingType::InOut,
+        ))
     }
 }
 
@@ -159,6 +161,10 @@ impl EaseStruct {
         if self.current_step > self.total_steps {
             self.current_step = self.total_steps
         }
+    }
+
+    pub fn set_step(&mut self, step: u16) {
+        self.current_step = step;
     }
 
     pub fn new(
@@ -209,8 +215,9 @@ impl EaseStruct {
 }
 
 /// Easing functions enum
-#[derive(Reflect)]
+#[derive(Reflect, Default)]
 pub enum EasingFunction {
+    #[default]
     Sine,
     Quad,
     Cubic,
@@ -224,10 +231,11 @@ pub enum EasingFunction {
 }
 
 /// Easing types enum.
-#[derive(Reflect)]
+#[derive(Reflect, Default)]
 pub enum EasingType {
     In,
     Out,
+    #[default]
     InOut,
 }
 

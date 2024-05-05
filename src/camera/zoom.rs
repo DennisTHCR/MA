@@ -1,6 +1,6 @@
 use super::CameraMarker;
-use bevy::prelude::*;
 use crate::utilities::easing::TimeEase;
+use bevy::prelude::*;
 
 pub struct ZoomPlugin;
 
@@ -13,9 +13,7 @@ impl Plugin for ZoomPlugin {
 // Systems
 
 /// System that changes the cameras zoom.
-fn update_zoom(
-    mut query: Query<(&mut OrthographicProjection, &TimeEase), With<CameraMarker>>,
-) {
+fn update_zoom(mut query: Query<(&mut OrthographicProjection, &TimeEase), With<CameraMarker>>) {
     let (mut projection, time_ease) = query.single_mut();
     projection.scale = 1. / time_ease.get_current_value();
 }

@@ -27,8 +27,12 @@ fn setup(mut contexts: EguiContexts) {
 
 fn sprite_test(mut commands: Commands, asset_server: Res<AssetServer>) {
     let handle = asset_server.load("test.png");
-    commands.spawn(SpriteBundle {
+    commands.spawn((SpriteBundle {
         texture: handle,
         ..default()
-    });
+    }, PlayerMarker));
 }
+
+// Temporary player identifier
+#[derive(Component)]
+pub struct PlayerMarker;
