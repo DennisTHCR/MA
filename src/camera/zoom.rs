@@ -13,7 +13,10 @@ impl Plugin for ZoomPlugin {
 // Systems
 
 /// System that changes the cameras zoom.
-fn update_zoom(mut query: Query<(&mut OrthographicProjection, &TimeEase), With<CameraMarker>>) {
+fn update_zoom(mut query: Query<(&mut OrthographicProjection, &ZoomEase), With<CameraMarker>>) {
     let (mut projection, time_ease) = query.single_mut();
-    projection.scale = 1. / time_ease.get_current_value();
+    projection.scale = 1. / time_ease.0.get_current_value();
 }
+
+#[derive(Component, Default)]
+pub struct ZoomEase(TimeEase);
