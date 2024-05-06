@@ -1,7 +1,8 @@
 pub mod zoom;
 mod movement;
 use bevy::prelude::*;
-use zoom::{ZoomPlugin, ZoomEase};
+use zoom::ZoomPlugin;
+use crate::utilities::easing::TimeEase;
 
 /// Plugin that handles everything related to managing the camera.
 pub struct CameraPlugin;
@@ -11,7 +12,7 @@ impl Plugin for CameraPlugin {
         let bundle = (
             Camera2dBundle::default(),
             CameraMarker,
-            ZoomEase::default(),
+            TimeEase::default(),
         );
         app.world.spawn(bundle);
         app.add_plugins((ZoomPlugin,));
@@ -22,4 +23,4 @@ impl Plugin for CameraPlugin {
 
 /// Marks the main camera.
 #[derive(Component)]
-struct CameraMarker;
+pub struct CameraMarker;

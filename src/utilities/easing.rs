@@ -139,9 +139,11 @@ impl EaseStruct {
             EasingFunction::Back => ease_back(self),
             EasingFunction::Elastic => ease_elastic(self),
             EasingFunction::Bounce => ease_bounce(self),
+            EasingFunction::None => ease_none(self),
         }
     }
 
+    /// Returns the linear progress that has been made.
     fn progress_normalized(&self) -> f32 {
         self.current_step as f32 / self.total_steps as f32
     }
@@ -228,6 +230,7 @@ pub enum EasingFunction {
     Back,
     Elastic,
     Bounce,
+    None,
 }
 
 /// Easing types enum.
@@ -380,3 +383,8 @@ fn ease_bounce(ease: &EaseStruct) -> f32 {
         EasingType::Out => Bounce::ease_out(t, b, c, d),
     }
 }
+
+/// None easing function
+    fn ease_none(ease: &EaseStruct) -> f32 {
+        ease.progress_normalized()
+    }
