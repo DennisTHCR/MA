@@ -50,7 +50,7 @@ impl TimeEase {
 
     /// Only way you should interact with zoom level.
     #[allow(dead_code)]
-    pub fn set_zoom(
+    pub fn set_ease(
         &mut self,
         goal_zoom: f32,
         easing_function: EasingFunction,
@@ -83,6 +83,10 @@ impl TimeEase {
 
     pub fn increase_step(&mut self, amount: u16) {
         self.0.increase_step(amount);
+    }
+
+    pub fn set_step(&mut self, step: u16) {
+        self.0.set_step(step)
     }
 
     pub fn new(
@@ -139,9 +143,11 @@ impl EaseStruct {
             EasingFunction::Back => ease_back(self),
             EasingFunction::Elastic => ease_elastic(self),
             EasingFunction::Bounce => ease_bounce(self),
+            EasingFunction::None => ease_none(self),
         }
     }
 
+    /// Returns the linear progress that has been made.
     fn progress_normalized(&self) -> f32 {
         self.current_step as f32 / self.total_steps as f32
     }
@@ -228,6 +234,7 @@ pub enum EasingFunction {
     Back,
     Elastic,
     Bounce,
+    None,
 }
 
 /// Easing types enum.
@@ -379,4 +386,9 @@ fn ease_bounce(ease: &EaseStruct) -> f32 {
         EasingType::InOut => Bounce::ease_in_out(t, b, c, d),
         EasingType::Out => Bounce::ease_out(t, b, c, d),
     }
+}
+
+/// None easing function
+fn ease_none(ease: &EaseStruct) -> f32 {
+    ease.progress_normalized()
 }

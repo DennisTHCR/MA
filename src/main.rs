@@ -5,8 +5,11 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use camera::CameraPlugin;
-use utilities::UtilitiesPlugin;
+use camera::{movement::TargetMarker, CameraMarker, CameraPlugin};
+use utilities::{
+    easing::{EasingFunction, EasingType, TimeEase},
+    UtilitiesPlugin,
+};
 
 fn main() {
     App::new()
@@ -17,6 +20,7 @@ fn main() {
             WorldInspectorPlugin::new(),
         ))
         .add_systems(Startup, (setup, sprite_test).chain())
+        .add_systems(Update, zoom_test)
         .run();
 }
 
@@ -27,10 +31,25 @@ fn setup(mut contexts: EguiContexts) {
 
 fn sprite_test(mut commands: Commands, asset_server: Res<AssetServer>) {
     let handle = asset_server.load("test.png");
-    commands.spawn((SpriteBundle {
-        texture: handle,
-        ..default()
-    }, PlayerMarker));
+    commands.spawn((
+        SpriteBundle {
+            texture: handle,
+            ..default()
+        },
+        PlayerMarker,
+        TargetMarker::new(0),
+    ));
+}
+
+fn zoom_test(mut query: Query<&mut TimeEase, With<CameraMarker>>) {
+    let time_ease = &mut query.single_mut();
+    if time_ease.is_done() {
+        if time_ease.get_end_val() == 5. {
+            time_ease.set_ease(10., EasingFunction::Sine, EasingType::InOut, 1000);
+        } else {
+            time_ease.set_ease(5., EasingFunction::Sine, EasingType::InOut, 1000);
+        }
+    }
 }
 
 // Temporary player identifier
