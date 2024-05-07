@@ -1,7 +1,8 @@
 pub mod zoom;
-mod movement;
+pub mod movement;
 use bevy::prelude::*;
 use zoom::ZoomPlugin;
+use movement::{CameraMovementPlugin, FollowMarker, MovementMode};
 use crate::utilities::easing::TimeEase;
 
 /// Plugin that handles everything related to managing the camera.
@@ -13,9 +14,10 @@ impl Plugin for CameraPlugin {
             Camera2dBundle::default(),
             CameraMarker,
             TimeEase::default(),
+            FollowMarker::new(0),
         );
         app.world.spawn(bundle);
-        app.add_plugins((ZoomPlugin,));
+        app.add_plugins((ZoomPlugin,CameraMovementPlugin));
     }
 }
 

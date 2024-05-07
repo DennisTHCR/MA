@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use camera::{CameraPlugin, CameraMarker};
+use camera::{CameraPlugin, CameraMarker, movement::TargetMarker};
 use utilities::{UtilitiesPlugin, easing::{TimeEase, EasingFunction, EasingType}};
 
 fn main() {
@@ -31,14 +31,17 @@ fn sprite_test(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((SpriteBundle {
         texture: handle,
         ..default()
-    }, PlayerMarker));
+    }, 
+    PlayerMarker,
+    TargetMarker::new(0),
+));
 }
 
 fn zoom_test(mut query: Query<&mut TimeEase, With<CameraMarker>>) {
     let time_ease = &mut query.single_mut();
     if time_ease.is_done() {
         if time_ease.get_end_val() == 5. {
-            time_ease.set_zoom(1., EasingFunction::Sine, EasingType::InOut, 1000);
+            time_ease.set_zoom(5., EasingFunction::Sine, EasingType::InOut, 1000);
         } else {
             time_ease.set_zoom(5., EasingFunction::Sine, EasingType::InOut, 1000);
         }
