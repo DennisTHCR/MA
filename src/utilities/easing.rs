@@ -50,7 +50,7 @@ impl TimeEase {
 
     /// Only way you should interact with zoom level.
     #[allow(dead_code)]
-    pub fn set_zoom(
+    pub fn set_ease(
         &mut self,
         goal_zoom: f32,
         easing_function: EasingFunction,
@@ -83,6 +83,10 @@ impl TimeEase {
 
     pub fn increase_step(&mut self, amount: u16) {
         self.0.increase_step(amount);
+    }
+
+    pub fn set_step(&mut self, step: u16) {
+        self.0.set_step(step)
     }
 
     pub fn new(
@@ -385,6 +389,6 @@ fn ease_bounce(ease: &EaseStruct) -> f32 {
 }
 
 /// None easing function
-    fn ease_none(ease: &EaseStruct) -> f32 {
-        ease.progress_normalized()
-    }
+fn ease_none(ease: &EaseStruct) -> f32 {
+    ease.progress_normalized()
+}
