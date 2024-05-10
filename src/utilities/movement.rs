@@ -1,14 +1,8 @@
 use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
 use bevy::prelude::*;
 use std::collections::HashMap;
-/*
-    Rewrite:
-    Camera modes: Free, Follow
-    Free: fn -> Sine InOut ease delta translation
-    Follow: delta player camera translation * distance
-*/
 
-/// Plugin to manage camera movement.
+/// Plugin to manage movement.
 pub struct CameraMovementPlugin;
 
 impl Plugin for CameraMovementPlugin {
@@ -24,17 +18,17 @@ impl Plugin for CameraMovementPlugin {
     }
 }
 
-/// Enum to decide the `Camera`s movement mode.
+/// Enum to decide the movement mode.
 #[derive(Component, Default)]
 pub enum MovementMode {
-    #[default]
     Follow,
+    #[default]
     Free,
 }
 
 // Follow Mode Section
 
-/// Component to mark camera as using `Follow` `MovementMode`. i32 is used as ID to link to target.
+/// Component to mark entity as using `Follow` `MovementMode`. i32 is used as ID to link to target.
 #[derive(Component)]
 pub struct FollowMarker(i32);
 
@@ -44,7 +38,7 @@ impl FollowMarker {
     }
 }
 
-/// Component to mark the entity to follow. i32 is used as ID to link to following camera.
+/// Component to mark the entity to follow. i32 is used as ID to link for following entities.
 #[derive(Component)]
 pub struct TargetMarker(i32);
 
@@ -67,13 +61,13 @@ fn following_movement_system(
     follower.iter_mut().for_each(|(marker, mut transform)| {
         let target_transform = **map.get(&marker.0).unwrap();
         let delta = target_transform.translation - transform.translation;
-        transform.translation += delta / 3. * time.delta_seconds();
+        transform.translation += delta * time.delta_seconds();
     })
 }
 
 // Free Mode Section
 
-/// Component to mark camera as using `Free` `MovementMode`
+/// Component to mark entity as using `Free` `MovementMode`
 #[derive(Component)]
 struct FreeMarker;
 
@@ -114,6 +108,7 @@ impl Default for FreeBundle {
     }
 }
 
+/// System that moves entities along their path.
 fn free_movement_system(mut query: Query<(&TimeEase, &StartGoalTransform, &mut Transform)>) {
     query
         .iter_mut()
@@ -124,6 +119,7 @@ fn free_movement_system(mut query: Query<(&TimeEase, &StartGoalTransform, &mut T
         })
 }
 
+/// System that handles changes made to the StartGoalTransform value
 fn update_time_ease(
     mut query: Query<
         (&mut TimeEase, &mut StartGoalTransform, &Transform),
