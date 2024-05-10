@@ -1,8 +1,6 @@
-pub mod movement;
 pub mod zoom;
-use crate::utilities::easing::TimeEase;
+use crate::utilities::{movement::{CameraMovementPlugin, FollowMarker}, easing::TimeEase};
 use bevy::prelude::*;
-use movement::{CameraMovementPlugin, FollowMarker};
 use zoom::ZoomPlugin;
 
 /// Plugin that handles everything related to managing the camera.

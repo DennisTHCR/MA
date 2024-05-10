@@ -5,10 +5,11 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use camera::{movement::TargetMarker, CameraMarker, CameraPlugin};
+use camera::{CameraMarker, CameraPlugin};
 use utilities::{
     easing::{EasingFunction, EasingType, TimeEase},
     UtilitiesPlugin,
+    movement::TargetMarker
 };
 
 fn main() {
