@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 mod camera;
 mod utilities;
 
@@ -5,9 +6,8 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use camera::{CameraMarker, CameraPlugin};
+use camera::CameraPlugin;
 use utilities::{
-    easing::{EasingFunction, EasingType, TimeEase},
     UtilitiesPlugin,
     movement::TargetMarker
 };
@@ -21,7 +21,6 @@ fn main() {
             WorldInspectorPlugin::new(),
         ))
         .add_systems(Startup, (setup, sprite_test).chain())
-        .add_systems(Update, zoom_test)
         .run();
 }
 
@@ -40,17 +39,6 @@ fn sprite_test(mut commands: Commands, asset_server: Res<AssetServer>) {
         PlayerMarker,
         TargetMarker::new(0),
     ));
-}
-
-fn zoom_test(mut query: Query<&mut TimeEase, With<CameraMarker>>) {
-    let time_ease = &mut query.single_mut();
-    if time_ease.is_done() {
-        if time_ease.get_end_val() == 5. {
-            time_ease.set_ease(10., EasingFunction::Sine, EasingType::InOut, 1000);
-        } else {
-            time_ease.set_ease(5., EasingFunction::Sine, EasingType::InOut, 1000);
-        }
-    }
 }
 
 // Temporary player identifier

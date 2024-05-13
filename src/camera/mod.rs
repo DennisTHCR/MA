@@ -1,5 +1,5 @@
 pub mod zoom;
-use crate::utilities::{movement::{CameraMovementPlugin, FollowMarker}, easing::TimeEase};
+use crate::utilities::{easing::{TimeEase, EasingFunction, EasingType}, movement::{CameraMovementPlugin, FollowMarker, MovementMode}};
 use bevy::prelude::*;
 use zoom::ZoomPlugin;
 
@@ -11,8 +11,16 @@ impl Plugin for CameraPlugin {
         let bundle = (
             Camera2dBundle::default(),
             CameraMarker,
-            TimeEase::default(),
+            TimeEase::new(
+                0,
+                1000,
+                0.,
+                10.,
+                EasingFunction::Sine,
+                EasingType::Out
+            ),
             FollowMarker::new(0),
+            MovementMode::Follow,
         );
         app.world.spawn(bundle);
         app.add_plugins((ZoomPlugin, CameraMovementPlugin));
