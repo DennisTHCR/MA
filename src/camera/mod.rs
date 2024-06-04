@@ -1,5 +1,5 @@
 pub mod zoom;
-use crate::utilities::{easing::{TimeEase, EasingFunction, EasingType}, movement::{CameraMovementPlugin, FollowMarker, MovementMode}};
+use crate::utilities::{easing::{TimeEase, EasingFunction, EasingType}, movement::{{CameraMovementPlugin, MovementMode}, follow::FollowMarker}};
 use bevy::prelude::*;
 use zoom::ZoomPlugin;
 

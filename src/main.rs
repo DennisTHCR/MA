@@ -9,7 +9,7 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
 use utilities::{
     UtilitiesPlugin,
-    movement::TargetMarker
+    movement::follow::TargetMarker
 };
 
 fn main() {
