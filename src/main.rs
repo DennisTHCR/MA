@@ -1,6 +1,7 @@
 #![windows_subsystem = "windows"]
 mod camera;
 mod utilities;
+mod input;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
@@ -11,6 +12,7 @@ use utilities::{
     UtilitiesPlugin,
     movement::follow::TargetMarker
 };
+use input::InputPlugin;
 
 fn main() {
     App::new()
@@ -19,6 +21,7 @@ fn main() {
             CameraPlugin,
             UtilitiesPlugin,
             WorldInspectorPlugin::new(),
+            InputPlugin,
         ))
         .add_systems(Startup, (setup, sprite_test).chain())
         .run();
