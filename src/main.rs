@@ -13,6 +13,7 @@ use camera::CameraPlugin;
 use input::InputPlugin;
 use level_management::LevelManagementPlugin;
 use utilities::UtilitiesPlugin;
+use player::PlayerPlugin;
 
 fn main() {
     App::new()
@@ -23,6 +24,7 @@ fn main() {
             WorldInspectorPlugin::new(),
             InputPlugin,
             LevelManagementPlugin,
+            PlayerPlugin,
         ))
         .add_systems(Startup, (setup).chain())
         .run();

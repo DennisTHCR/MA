@@ -27,4 +27,4 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
 pub struct PlayerMarker;
 
 #[derive(Resource)]
-pub struct PlayerSpeed(f32);
+pub struct PlayerSpeed(pub f32);
