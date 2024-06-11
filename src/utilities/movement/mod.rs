@@ -1,8 +1,8 @@
-pub mod free;
 pub mod follow;
+pub mod free;
 use bevy::prelude::*;
 use follow::following_movement_system;
-use free::{update_time_ease, free_movement_system};
+use free::{free_movement_system, update_time_ease};
 
 pub struct CameraMovementPlugin;
 
@@ -26,4 +26,3 @@ pub enum MovementMode {
     #[default]
     Free,
 }
-

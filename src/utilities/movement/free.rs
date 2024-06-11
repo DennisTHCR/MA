@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
+use bevy::prelude::*;
 
 /// Component to mark entity as using `Free` `MovementMode`
 #[derive(Component)]

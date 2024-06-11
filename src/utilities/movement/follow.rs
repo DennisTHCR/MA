@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use bevy::{prelude::*, window::PrimaryWindow};
+use std::collections::HashMap;
 
 #[derive(Component)]
 pub struct FollowMarker(i32);
@@ -36,7 +36,6 @@ pub fn following_movement_system(
         let target_transform = **map.get(&marker.0).unwrap();
         let delta = target_transform.translation - transform.translation;
         if delta.xy().length() >= 0.5 * width {
-
         } else {
             transform.translation += delta * time.delta_seconds();
         }

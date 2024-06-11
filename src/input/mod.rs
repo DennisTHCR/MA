@@ -1,17 +1,20 @@
 use bevy::prelude::*;
 
-use crate::PlayerMarker;
+use crate::player::PlayerMarker;
 
 pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(Update, handle_input);
+        app.add_systems(Update, handle_input);
     }
 }
 
-fn handle_input(input: Res<ButtonInput<KeyCode>>, mut transform: Query<&mut Transform, With<PlayerMarker>>, time: Res<Time>) {
+fn handle_input(
+    input: Res<ButtonInput<KeyCode>>,
+    mut transform: Query<&mut Transform, With<PlayerMarker>>,
+    time: Res<Time>,
+) {
     let movement = 30. * time.delta_seconds();
     if input.pressed(KeyCode::ArrowRight) {
         transform.single_mut().translation.x += movement;

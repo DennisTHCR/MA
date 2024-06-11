@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
+pub mod assets;
 pub mod easing;
 pub mod movement;
-pub mod assets;
 
 pub struct UtilitiesPlugin;
 
