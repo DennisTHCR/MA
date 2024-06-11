@@ -2,6 +2,7 @@
 mod camera;
 mod utilities;
 mod input;
+mod level_management;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
@@ -13,6 +14,7 @@ use utilities::{
     movement::follow::TargetMarker
 };
 use input::InputPlugin;
+use level_management::LevelManagementPlugin;
 
 fn main() {
     App::new()
@@ -22,6 +24,7 @@ fn main() {
             UtilitiesPlugin,
             WorldInspectorPlugin::new(),
             InputPlugin,
+            LevelManagementPlugin,
         ))
         .add_systems(Startup, (setup, sprite_test).chain())
         .run();
@@ -37,6 +40,7 @@ fn sprite_test(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SpriteBundle {
             texture: handle,
+            transform: Transform::from_xyz(0., 0., 10.),
             ..default()
         },
         PlayerMarker,
