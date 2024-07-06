@@ -13,10 +13,11 @@ impl Plugin for InputPlugin {
 fn handle_input(
     input: Res<ButtonInput<KeyCode>>,
     mut transform: Query<&mut Transform, With<PlayerMarker>>,
-    time: Res<Time>,
     speed: Res<PlayerSpeed>,
+    time: Res<Time>,
 ) {
     let movement = speed.0 * time.delta_seconds();
+    println!("{:?}", movement);
     if input.pressed(KeyCode::ArrowRight) {
         transform.single_mut().translation.x += movement;
     }
@@ -24,9 +25,6 @@ fn handle_input(
         transform.single_mut().translation.x -= movement;
     }
     if input.pressed(KeyCode::ArrowUp) {
-        transform.single_mut().translation.y += movement;
-    }
-    if input.pressed(KeyCode::ArrowDown) {
-        transform.single_mut().translation.y -= movement;
+        transform.single_mut().translation.y += movement*2.;
     }
 }

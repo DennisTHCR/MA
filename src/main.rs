@@ -4,6 +4,7 @@ mod input;
 mod level_management;
 mod player;
 mod utilities;
+mod physics;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
@@ -14,6 +15,7 @@ use input::InputPlugin;
 use level_management::LevelManagementPlugin;
 use utilities::UtilitiesPlugin;
 use player::PlayerPlugin;
+use physics::PhysicsPlugin;
 
 fn main() {
     App::new()
@@ -25,6 +27,7 @@ fn main() {
             InputPlugin,
             LevelManagementPlugin,
             PlayerPlugin,
+            PhysicsPlugin,
         ))
         .add_systems(Startup, (setup).chain())
         .run();

@@ -34,10 +34,10 @@ pub fn following_movement_system(
     });
     follower.iter_mut().for_each(|(marker, mut transform)| {
         let target_transform = **map.get(&marker.0).unwrap();
-        let delta = target_transform.translation - transform.translation;
+        let delta = target_transform.translation - transform.translation; 
+        transform.translation += delta * time.delta_seconds();
         if delta.xy().length() >= 0.5 * width {
-        } else {
-            transform.translation += delta * time.delta_seconds();
+            transform.translation += delta.xy().length() - 0.5 * width;
         }
     });
 }

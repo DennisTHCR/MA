@@ -1,4 +1,5 @@
 use crate::utilities::movement::follow::TargetMarker;
+use bevy_rapier2d::prelude::*;
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -15,11 +16,14 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SpriteBundle {
             texture: handle,
-            transform: Transform::from_xyz(0., 0., 10.),
+            transform: Transform::from_xyz(0., 30., 10.),
             ..default()
         },
         PlayerMarker,
         TargetMarker::new(0),
+        RigidBody::KinematicPositionBased,
+        Collider::cuboid(16., 16.),
+        KinematicCharacterController::default(),
     ));
 }
 

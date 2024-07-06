@@ -8,6 +8,7 @@ resolver = "2"
 [dependencies]
 bevy = { version = "0.13.2", features = ["dynamic_linking"] }
 bevy-inspector-egui = "0.24.0"
+bevy_rapier2d = "0.26.0"
 catppuccin-egui = { version = "5.1.1", features = [ "egui27" ], default-features = false }
 easer = "0.3.0"
 
