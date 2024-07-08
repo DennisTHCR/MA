@@ -19,9 +19,12 @@ fn setup_collider(mut commands: Commands) {
         .insert(TransformBundle::from(Transform::from_xyz(0., 0., -10.)));
 }
 
-fn gravity(mut query: Query<(&Gravity, &mut Transform)>, time: Res<Time>) {
-
+fn apply_forces(mut query: Query<(&Gravity, &mut Transform)>, time: Res<Time>) {
+    
 }
 
 #[derive(Component)]
 pub struct Gravity(f32);
+
+#[derive(Component)]
+pub struct Forces(Vec2);

@@ -17,7 +17,6 @@ fn handle_input(
     time: Res<Time>,
 ) {
     let movement = speed.0 * time.delta_seconds();
-    println!("{:?}", movement);
     if input.pressed(KeyCode::ArrowRight) {
         transform.single_mut().translation.x += movement;
     }
