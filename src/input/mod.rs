@@ -1,6 +1,10 @@
 use bevy::prelude::*;
+use bevy_rapier2d::control::{KinematicCharacterController, KinematicCharacterControllerOutput};
 
-use crate::player::{PlayerMarker, PlayerSpeed};
+use crate::{
+    physics::{InputOffset, JumpForce},
+    player::{JumpHeight, PlayerMarker, PlayerSpeed},
+};
 
 pub struct InputPlugin;
 
@@ -12,18 +16,35 @@ impl Plugin for InputPlugin {
 
 fn handle_input(
     input: Res<ButtonInput<KeyCode>>,
-    mut transform: Query<&mut Transform, With<PlayerMarker>>,
+    mut query: Query<
+        (
+            &mut JumpForce,
+            &mut InputOffset,
+            &KinematicCharacterController,
+            &KinematicCharacterControllerOutput,
+            &JumpHeight,
+        ),
+        With<PlayerMarker>,
+    >,
     speed: Res<PlayerSpeed>,
     time: Res<Time>,
 ) {
+    let (
+        mut jump_force,
+        mut input_offset,
+        character_controller,
+        character_controller_output,
+        jump_height,
+    ) = query.single_mut();
     let movement = speed.0 * time.delta_seconds();
+    input_offset.0 = Vec2::ZERO;
     if input.pressed(KeyCode::ArrowRight) {
-        transform.single_mut().translation.x += movement;
+        input_offset.0.x += movement;
     }
     if input.pressed(KeyCode::ArrowLeft) {
-        transform.single_mut().translation.x -= movement;
+        input_offset.0.x -= movement;
     }
-    if input.pressed(KeyCode::ArrowUp) {
-        transform.single_mut().translation.y += movement*2.;
+    if input.just_pressed(KeyCode::ArrowUp) && character_controller_output.grounded {
+        jump_force.0 += character_controller.up * jump_height.0;
     }
 }

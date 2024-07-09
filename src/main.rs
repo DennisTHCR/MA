@@ -2,9 +2,9 @@
 mod camera;
 mod input;
 mod level_management;
+mod physics;
 mod player;
 mod utilities;
-mod physics;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
@@ -13,9 +13,9 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
 use input::InputPlugin;
 use level_management::LevelManagementPlugin;
-use utilities::UtilitiesPlugin;
-use player::PlayerPlugin;
 use physics::PhysicsPlugin;
+use player::PlayerPlugin;
+use utilities::UtilitiesPlugin;
 
 fn main() {
     App::new()

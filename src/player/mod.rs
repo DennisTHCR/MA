@@ -1,6 +1,9 @@
-use crate::utilities::movement::follow::TargetMarker;
-use bevy_rapier2d::prelude::*;
+use crate::{
+    physics::{Gravity, GravityForce, InputOffset, JumpForce, Offset},
+    utilities::movement::follow::TargetMarker,
+};
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -23,12 +26,24 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         TargetMarker::new(0),
         RigidBody::KinematicPositionBased,
         Collider::cuboid(16., 16.),
-        KinematicCharacterController::default(),
+        KinematicCharacterController {
+            offset: CharacterLength::Absolute(1.),
+            snap_to_ground: Some(CharacterLength::Absolute(1.2)),
+            ..default()
+        },
+        KinematicCharacterControllerOutput::default(),
+        Gravity(9.0),
+        GravityForce(Vec2::ZERO),
+        Offset(Vec2::ZERO),
+        InputOffset(Vec2::ZERO),
+        JumpForce(Vec2::ZERO),
+        JumpHeight(5.),
     ));
 }
 
 #[derive(Component)]
 pub struct PlayerMarker;
-
+#[derive(Component)]
+pub struct JumpHeight(pub f32);
 #[derive(Resource)]
 pub struct PlayerSpeed(pub f32);
