@@ -10,8 +10,13 @@ impl Plugin for InputPlugin {
 }
 
 fn handle_input(input: Res<ButtonInput<KeyCode>>, mut player_input: ResMut<PlayerInput>) {
-    player_input.jump = input.just_pressed(KeyCode::Space) || input.just_pressed(KeyCode::ArrowUp) || input.just_pressed(KeyCode::KeyW);
-    player_input.crouch = input.just_pressed(KeyCode::ShiftLeft) || input.just_pressed(KeyCode::ShiftRight) || input.just_pressed(KeyCode::ArrowDown) || input.just_pressed(KeyCode::KeyS);
+    player_input.jump = input.just_pressed(KeyCode::Space)
+        || input.just_pressed(KeyCode::ArrowUp)
+        || input.just_pressed(KeyCode::KeyW);
+    player_input.crouch = input.just_pressed(KeyCode::ShiftLeft)
+        || input.just_pressed(KeyCode::ShiftRight)
+        || input.just_pressed(KeyCode::ArrowDown)
+        || input.just_pressed(KeyCode::KeyS);
     player_input.left = input.pressed(KeyCode::ArrowLeft) || input.pressed(KeyCode::KeyA);
     player_input.right = input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::KeyD)
 }

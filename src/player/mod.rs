@@ -7,7 +7,6 @@ use bevy_tnua::controller::TnuaControllerBundle;
 use bevy_tnua_rapier2d::{TnuaRapier2dIOBundle, TnuaRapier2dSensorShape};
 use movement::PlayerMovementPlugin;
 
-
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

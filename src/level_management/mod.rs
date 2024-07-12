@@ -1,5 +1,6 @@
 use crate::utilities::assets::{init_resources, ColorResource};
 use bevy::{prelude::*, sprite::Mesh2dHandle};
+use bevy_rapier2d::geometry::Collider;
 
 pub struct LevelManagementPlugin;
 
@@ -15,10 +16,13 @@ fn setup_level(
     mut meshes: ResMut<Assets<Mesh>>,
 ) {
     let mesh: Mesh2dHandle = meshes.add(Rectangle::new(200., 10.)).into();
-    commands.spawn(ColorMesh2dBundle {
-        mesh,
-        material: materials.0[0].0.clone(),
-        transform: Transform::from_xyz(0., 0., 0.),
-        ..default()
-    });
+    commands.spawn((
+        ColorMesh2dBundle {
+            mesh,
+            material: materials.0[0].0.clone(),
+            transform: Transform::from_xyz(0., 0., 0.),
+            ..default()
+        },
+        Collider::cuboid(100., 5.),
+    ));
 }

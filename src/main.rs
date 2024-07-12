@@ -2,7 +2,6 @@
 mod camera;
 mod input;
 mod level_management;
-mod physics;
 mod player;
 mod utilities;
 
@@ -10,10 +9,10 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
+use bevy_rapier2d::prelude::*;
 use camera::CameraPlugin;
 use input::InputPlugin;
 use level_management::LevelManagementPlugin;
-use physics::PhysicsPlugin;
 use player::PlayerPlugin;
 use utilities::UtilitiesPlugin;
 
@@ -27,7 +26,8 @@ fn main() {
             InputPlugin,
             LevelManagementPlugin,
             PlayerPlugin,
-            PhysicsPlugin,
+            RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
+            RapierDebugRenderPlugin::default(),
         ))
         .add_systems(Startup, (setup).chain())
         .run();
