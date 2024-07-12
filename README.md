@@ -4,7 +4,7 @@ My final project for my Matura Paper.
 - [x] Implement Camera Plugin
 - [x] Implement Simple Input Plugin
 - [x] Implement Simple Level Management Plugin
-- [ ] Implement RapierRS
+- [x] Implement RapierRS
 - [ ] Implement Basic Game Logic
 - [ ] Implement Assets
 - [ ] Implement Dynamic Level Elements
