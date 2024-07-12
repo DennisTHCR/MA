@@ -17,7 +17,7 @@ impl Plugin for CameraPlugin {
         let bundle = (
             Camera2dBundle::default(),
             CameraMarker,
-            TimeEase::new(0, 1000, 0., 10., EasingFunction::Sine, EasingType::Out),
+            TimeEase::new(0, 1000, 0., 1., EasingFunction::Sine, EasingType::Out),
             FollowMarker::new(0),
             MovementMode::Follow,
         );
