@@ -1,5 +1,7 @@
 mod movement;
 
+use std::path::Path;
+
 use crate::utilities::movement::follow::TargetMarker;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -17,7 +19,7 @@ impl Plugin for PlayerPlugin {
 }
 
 fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let handle = asset_server.load("test.png");
+    let handle = asset_server.load(Path::new("test.png"));
     commands.spawn((
         SpriteBundle {
             texture: handle,
@@ -29,8 +31,8 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         TnuaRapier2dIOBundle::default(),
         TnuaControllerBundle::default(),
         LockedAxes::ROTATION_LOCKED,
-        TnuaRapier2dSensorShape(Collider::cuboid(15.5, 15.5)),
-        Collider::cuboid(16., 16.),
+        TnuaRapier2dSensorShape(Collider::cuboid(115., 135.)),
+        Collider::cuboid(120., 140.),
     ));
 }
 
@@ -40,15 +42,17 @@ pub struct PlayerBundle {
     jump_height: JumpHeight,
     speed: Speed,
     target_marker: TargetMarker,
+    name: Name,
 }
 
 impl Default for PlayerBundle {
     fn default() -> PlayerBundle {
         PlayerBundle {
             marker: PlayerMarker,
-            jump_height: JumpHeight(50.),
-            speed: Speed(200.),
+            jump_height: JumpHeight(200.),
+            speed: Speed(1000.),
             target_marker: TargetMarker::new(0),
+            name: Name::new("Player"),
         }
     }
 }

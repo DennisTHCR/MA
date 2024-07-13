@@ -25,10 +25,10 @@ fn apply_movement(
             controller.basis(TnuaBuiltinWalk {
                 desired_velocity: input.direction_vector().extend(0.) * speed.0,
                 desired_forward: input.direction_vector().extend(0.),
-                float_height: 2.5,
+                float_height: 5.,
                 spring_strengh: 1200.,
-                acceleration: 500.,
-                air_acceleration: 500.,
+                acceleration: 5000.,
+                air_acceleration: 5000.,
                 ..default()
             });
 
