@@ -21,7 +21,7 @@ impl Plugin for CameraPlugin {
             FollowMarker::new(0),
             MovementMode::Follow,
         );
-        app.world.spawn(bundle);
+        app.world_mut().spawn(bundle);
         app.add_plugins((ZoomPlugin, CameraMovementPlugin));
     }
 }

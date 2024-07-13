@@ -6,7 +6,6 @@ mod player;
 mod utilities;
 
 use bevy::prelude::*;
-use bevy_inspector_egui::bevy_egui::EguiContexts;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rapier2d::prelude::*;
@@ -29,11 +28,5 @@ fn main() {
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
             RapierDebugRenderPlugin::default(),
         ))
-        .add_systems(Startup, (setup).chain())
         .run();
-}
-
-/// For now just themes egui to use the catppuccin theme.
-fn setup(mut contexts: EguiContexts) {
-    catppuccin_egui::set_theme(contexts.ctx_mut(), catppuccin_egui::MOCHA);
 }
