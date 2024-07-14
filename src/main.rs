@@ -5,6 +5,10 @@ mod level_management;
 mod player;
 mod utilities;
 
+#[allow(unused_imports)]
+#[cfg(debug_assertions)] 
+use bevy_dylib;
+
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
