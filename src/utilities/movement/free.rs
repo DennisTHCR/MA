@@ -2,6 +2,7 @@ use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
 use bevy::prelude::*;
 
 /// Component to mark entity as using `Free` `MovementMode`
+#[allow(unused)]
 #[derive(Component)]
 struct FreeMarker;
 
@@ -26,6 +27,7 @@ impl StartGoalTransform {
 }
 
 /// Bundle containing everything the `Free` `MovementMode` needs.
+#[allow(unused)]
 #[derive(Bundle)]
 struct FreeBundle {
     free_marker: FreeMarker,

@@ -6,36 +6,53 @@ pub struct LevelManagementPlugin;
 
 impl Plugin for LevelManagementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_level.after(init_resources));
+        app
+            .insert_resource(Level(Vec::new()))
+            .add_systems(Startup, (load_level, setup_level.after(init_resources)).chain());
     }
 }
 
 // TODO: Add array/list resource(/component for multiple levels?) containing positions and sizes for colliders to be added (and textures?)
 
+fn load_level(mut level: ResMut<Level>) {
+    level.0.push(Block::new(0., 0., 1000., 100.));
+    level.0.push(Block::new(1300., 100., 100., 100.));
+}
+
 fn setup_level(
     mut commands: Commands,
     materials: Res<ColorResource>,
     mut meshes: ResMut<Assets<Mesh>>,
+    level: Res<Level>
 ) {
-    let mesh: Mesh2dHandle = meshes.add(Rectangle::new(2000., 100.)).into();
-    commands.spawn((
-        ColorMesh2dBundle {
-            mesh: mesh.clone(),
-            material: materials.0[0].0.clone(),
-            transform: Transform::from_xyz(0., 0., 0.),
-            ..default()
-        },
-        Collider::cuboid(1000., 50.),
-        Name::new("Floor 1")
-    ));
-    commands.spawn((
-        ColorMesh2dBundle {
-            mesh: mesh.clone(),
-            material: materials.0[0].0.clone(),
-            transform: Transform::from_xyz(2200., 10., 0.),
-            ..default()
-        },
-        Collider::cuboid(1000., 50.),
-        Name::new("Floor 2")
-    ));
+    for block in &level.0 {
+        let mesh: Mesh2dHandle = meshes.add(Rectangle::new(block.size.x, block.size.y)).into();
+        commands.spawn((
+            ColorMesh2dBundle {
+                mesh: mesh.clone(),
+                material: materials.0[0].0.clone(),
+                transform: Transform::from_translation(block.pos.extend(0.)),
+                ..default()
+            },
+            Collider::cuboid(block.size.x / 2., block.size.y / 2.),
+            Name::new("Block")
+        ));
+    }
+}
+
+#[derive(Resource)]
+struct Level (Vec<Block>);
+
+struct Block {
+    pos: Vec2,
+    size: Vec2,
+}
+
+impl Block {
+    fn new(x: f32, y: f32, width: f32, height: f32) -> Block {
+        Block {
+            pos: Vec2::new(x,y),
+            size: Vec2::new(width, height),
+        }
+    }
 }

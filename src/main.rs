@@ -4,10 +4,7 @@ mod input;
 mod level_management;
 mod player;
 mod utilities;
-
-#[allow(unused_imports)]
-#[cfg(debug_assertions)] 
-use bevy_dylib;
+mod game_logic;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -18,6 +15,7 @@ use input::InputPlugin;
 use level_management::LevelManagementPlugin;
 use player::PlayerPlugin;
 use utilities::UtilitiesPlugin;
+use game_logic::GameLogicPlugin;
 
 fn main() {
     App::new()
@@ -29,6 +27,7 @@ fn main() {
             InputPlugin,
             LevelManagementPlugin,
             PlayerPlugin,
+            GameLogicPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
             RapierDebugRenderPlugin::default(),
         ))

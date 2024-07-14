@@ -28,6 +28,7 @@ pub fn following_movement_system(
     window: Query<&Window, With<PrimaryWindow>>,
 ) {
     let width = window.single().width();
+    let height = window.single().height();
     let mut map = HashMap::new();
     target.iter().for_each(|(marker, transform)| {
         map.insert(marker.0, transform);
@@ -36,8 +37,14 @@ pub fn following_movement_system(
         let target_transform = **map.get(&marker.0).unwrap();
         let delta = target_transform.translation - transform.translation;
         transform.translation += delta * time.delta_seconds();
-        if delta.xy().length() >= 0.5 * width {
-            transform.translation += delta.xy().length() - 0.5 * width;
+        if delta.x.abs() > 0.5 * width {
+            transform.translation.x += (delta.x.abs() - 0.5 * width) * delta.x.abs() / delta.x;
+        }
+        if delta.y.abs() > 0.5 * height {
+            transform.translation.y += (delta.y.abs() - 0.5 * height) * delta.y.abs() / delta.y;
+        }
+        if transform.translation.x == f32::INFINITY || transform.translation.y == f32::INFINITY {
+            transform.translation = target_transform.translation;
         }
     });
 }

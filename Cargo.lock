@@ -320,6 +320,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e938630e9f472b1899c78ef84aa907081b23bad8333140e2295c620485b6ee7"
 dependencies = [
+ "bevy_dylib",
  "bevy_internal",
 ]
 
@@ -2704,7 +2705,6 @@ dependencies = [
  "bevy-inspector-egui",
  "bevy-tnua",
  "bevy-tnua-rapier2d",
- "bevy_dylib",
  "bevy_rapier2d",
  "easer",
 ]
