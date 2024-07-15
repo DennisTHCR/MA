@@ -5,7 +5,8 @@ My final project for my Matura Paper.
 - [x] Implement Simple Input Plugin
 - [x] Implement Simple Level Management Plugin
 - [x] Implement RapierRS
-- [ ] Implement Basic Game Logic
-- [ ] Implement Assets
+- [x] Implement Basic Game Logic
+- [x] Implement Assets
 - [ ] Implement Dynamic Level Elements
+- [ ] Implement Level Editor
 - [ ] Implement Settings Screen (to toggle features)
