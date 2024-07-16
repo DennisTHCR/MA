@@ -18,7 +18,8 @@ fn handle_input(input: Res<ButtonInput<KeyCode>>, mut player_input: ResMut<Playe
         || input.just_pressed(KeyCode::ArrowDown)
         || input.just_pressed(KeyCode::KeyS);
     player_input.left = input.pressed(KeyCode::ArrowLeft) || input.pressed(KeyCode::KeyA);
-    player_input.right = input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::KeyD)
+    player_input.right = input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::KeyD);
+    player_input.change_mode = input.just_pressed(KeyCode::KeyG);
 }
 
 #[allow(unused)]
@@ -28,6 +29,7 @@ pub struct PlayerInput {
     right: bool,
     jump: bool,
     crouch: bool,
+    change_mode: bool,
 }
 
 #[allow(unused)]
@@ -49,5 +51,9 @@ impl PlayerInput {
             out += Vec2::new(1., 0.);
         }
         out
+    }
+
+    pub fn change_mode_pressed(self) -> bool {
+        self.change_mode
     }
 }

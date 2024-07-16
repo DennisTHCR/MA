@@ -5,6 +5,7 @@ mod level_management;
 mod player;
 mod utilities;
 mod game_logic;
+mod states;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -16,6 +17,7 @@ use level_management::LevelManagementPlugin;
 use player::PlayerPlugin;
 use utilities::UtilitiesPlugin;
 use game_logic::GameLogicPlugin;
+use states::StatePlugin;
 
 fn main() {
     App::new()
@@ -28,6 +30,7 @@ fn main() {
             LevelManagementPlugin,
             PlayerPlugin,
             GameLogicPlugin,
+            StatePlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
             RapierDebugRenderPlugin::default(),
         ))
