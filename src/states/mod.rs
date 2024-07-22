@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::input::PlayerInput;
+use crate::{camera::CameraMarker, input::PlayerInput, utilities::movement::follow::FollowMarker};
 
 pub struct StatePlugin;
 
@@ -9,6 +9,7 @@ impl Plugin for StatePlugin {
         app.init_state::<AppState>()
             .add_systems(Update, state_transition)
             .add_systems(OnExit(AppState::Playing), exit_playing)
+            .add_systems(OnEnter(AppState::Playing), enter_playing)
             .add_systems(OnEnter(AppState::Editing), enter_editing);
     }
 }
@@ -31,11 +32,19 @@ fn state_transition(inputs: Res<PlayerInput>, state: Res<State<AppState>>, mut n
 
 // TODO: Remove Camera Follow mode
 // Remove player physics? idk
-fn exit_playing() {
+fn exit_playing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
+    query.iter().for_each(|entity| {
+        commands.entity(entity).remove::<FollowMarker>();
+    });
+}
 
+fn enter_playing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
+    query.iter().for_each(|entity| {
+        commands.entity(entity).insert(FollowMarker::new(0));
+    })
 }
 
 // TODO: Make Camera move through arrow keys / dragging or sth idk
-fn enter_editing() {
-
+fn enter_editing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
+    
 }

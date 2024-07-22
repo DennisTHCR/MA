@@ -31,7 +31,7 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         TnuaRapier2dIOBundle::default(),
         TnuaControllerBundle::default(),
         LockedAxes::ROTATION_LOCKED,
-        TnuaRapier2dSensorShape(Collider::cuboid(115., 135.)),
+        TnuaRapier2dSensorShape(Collider::cuboid(110., 130.)),
         Collider::cuboid(120., 140.),
     ));
 }
