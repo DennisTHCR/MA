@@ -2,7 +2,7 @@ mod movement;
 
 use std::path::Path;
 
-use crate::utilities::movement::follow::TargetMarker;
+use crate::camera::movement::follow::{TargetMarker, Target};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use bevy_tnua::controller::TnuaControllerBundle;
@@ -31,7 +31,7 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         TnuaRapier2dIOBundle::default(),
         TnuaControllerBundle::default(),
         LockedAxes::ROTATION_LOCKED,
-        TnuaRapier2dSensorShape(Collider::cuboid(110., 130.)),
+        TnuaRapier2dSensorShape(Collider::cuboid(115., 135.)),
         Collider::cuboid(120., 140.),
     ));
 }
@@ -51,7 +51,7 @@ impl Default for PlayerBundle {
             marker: PlayerMarker,
             jump_height: JumpHeight(200.),
             speed: Speed(1000.),
-            target_marker: TargetMarker::new(0),
+            target_marker: TargetMarker::new(Target::Player),
             name: Name::new("Player"),
         }
     }

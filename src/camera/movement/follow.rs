@@ -2,22 +2,27 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use std::collections::HashMap;
 
 #[derive(Component)]
-pub struct FollowMarker(i32);
+pub struct FollowMarker(Target);
 
 impl FollowMarker {
-    pub fn new(id: i32) -> Self {
-        FollowMarker(id)
+    pub fn new(target: Target) -> Self {
+        FollowMarker(target)
     }
 }
 
 /// Component to mark the entity to follow. i32 is used as ID to link for following entities.
 #[derive(Component)]
-pub struct TargetMarker(i32);
+pub struct TargetMarker(Target);
 
 impl TargetMarker {
-    pub fn new(id: i32) -> Self {
-        TargetMarker(id)
+    pub fn new(target: Target) -> Self {
+        TargetMarker(target)
     }
+}
+
+#[derive(Eq, Hash, PartialEq, Clone, Copy)]
+pub enum Target {
+    Player
 }
 
 /// System that pulls the following entity towards its target. Speed depends on delta transform.

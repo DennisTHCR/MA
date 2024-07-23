@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use bevy_tnua::prelude::{TnuaBuiltinWalk, TnuaController};
 
-use crate::{camera::CameraMarker, input::PlayerInput, utilities::movement::follow::FollowMarker};
+use crate::{camera::{movement::follow::{FollowMarker, Target}, CameraMarker}, input::PlayerInput};
 
 pub struct StatePlugin;
 
@@ -32,15 +33,28 @@ fn state_transition(inputs: Res<PlayerInput>, state: Res<State<AppState>>, mut n
 
 // TODO: Remove Camera Follow mode
 // Remove player physics? idk
-fn exit_playing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
-    query.iter().for_each(|entity| {
+fn exit_playing(mut commands: Commands, cameras: Query<Entity, With<CameraMarker>>, mut query: Query<&mut TnuaController, Without<CameraMarker>>) {
+    cameras.iter().for_each(|entity| {
         commands.entity(entity).remove::<FollowMarker>();
     });
+    query
+        .iter_mut()
+        .for_each(|mut controller| {
+            controller.basis(TnuaBuiltinWalk {
+                desired_velocity: Vec3::ZERO,
+                desired_forward: Vec3::ZERO,
+                float_height: 5.,
+                spring_strengh: 1200.,
+                acceleration: 5000.,
+                air_acceleration: 5000.,
+                ..default()
+            });
+        })
 }
 
-fn enter_playing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
-    query.iter().for_each(|entity| {
-        commands.entity(entity).insert(FollowMarker::new(0));
+fn enter_playing(mut commands: Commands, cameras: Query<Entity, With<CameraMarker>>) {
+    cameras.iter().for_each(|entity| {
+        commands.entity(entity).insert(FollowMarker::new(Target::Player));
     })
 }
 

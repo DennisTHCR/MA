@@ -1,8 +1,10 @@
 pub mod follow;
 pub mod free;
+pub mod input;
 use bevy::prelude::*;
 use follow::following_movement_system;
 use free::{free_movement_system, update_time_ease};
+use input::InputMovementPlugin;
 
 pub struct CameraMovementPlugin;
 
@@ -15,14 +17,15 @@ impl Plugin for CameraMovementPlugin {
                 (following_movement_system, free_movement_system),
             )
                 .chain(),
-        );
+        ).add_plugins(InputMovementPlugin);
     }
 }
 
 /// Enum to decide the movement mode.
 #[derive(Component, Default)]
 pub enum MovementMode {
-    Follow,
     #[default]
+    Follow,
     Free,
+    Input,
 }

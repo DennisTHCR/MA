@@ -7,6 +7,11 @@ My final project for my Matura Paper.
 - [x] Implement RapierRS
 - [x] Implement Basic Game Logic
 - [x] Implement Assets
-- [ ] Implement Dynamic Level Elements
 - [ ] Implement Level Editor
+    - [x] Add Gamestate
+    - [x] Add Input Based Camera Movement
+    - [ ] Add Lines To Help (Death line, spawn position)
+    - [ ] Add Block Selection (right click to switch blocks)
+    - [ ] Implement Grid Snap Placement
+    - [ ] Implement Serde (Loading, Saving)
 - [ ] Implement Settings Screen (to toggle features)
