@@ -21,9 +21,9 @@ fn handle_input(input: Res<ButtonInput<KeyCode>>, mut player_input: ResMut<Playe
         || input.just_pressed(KeyCode::ArrowDown)
         || input.just_pressed(KeyCode::KeyS);
     player_input.down = input.pressed(KeyCode::ShiftLeft)
-    || input.pressed(KeyCode::ShiftRight)
-    || input.pressed(KeyCode::ArrowDown)
-    || input.pressed(KeyCode::KeyS);
+        || input.pressed(KeyCode::ShiftRight)
+        || input.pressed(KeyCode::ArrowDown)
+        || input.pressed(KeyCode::KeyS);
     player_input.left = input.pressed(KeyCode::ArrowLeft) || input.pressed(KeyCode::KeyA);
     player_input.right = input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::KeyD);
     player_input.change_mode = input.just_pressed(KeyCode::KeyG);

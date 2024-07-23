@@ -11,7 +11,7 @@ impl FollowMarker {
 }
 
 /// Component to mark the entity to follow. i32 is used as ID to link for following entities.
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 pub struct TargetMarker(Target);
 
 impl TargetMarker {
@@ -22,7 +22,7 @@ impl TargetMarker {
 
 #[derive(Eq, Hash, PartialEq, Clone, Copy)]
 pub enum Target {
-    Player
+    Player,
 }
 
 /// System that pulls the following entity towards its target. Speed depends on delta transform.

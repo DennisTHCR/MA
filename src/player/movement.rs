@@ -1,5 +1,5 @@
 use super::{JumpHeight, Speed};
-use crate::{input::PlayerInput, states::AppState};
+use crate::{config::CharacterControllerSettings, input::PlayerInput, states::AppState};
 use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinCrouch, prelude::*};
 use bevy_tnua_rapier2d::*;
@@ -8,14 +8,16 @@ pub struct PlayerMovementPlugin;
 
 impl Plugin for PlayerMovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, apply_movement.run_if(in_state(AppState::Playing))).add_plugins((
-            TnuaRapier2dPlugin::default(),
-            TnuaControllerPlugin::default(),
-        ));
+        app.add_systems(Update, apply_movement.run_if(in_state(AppState::Playing)))
+            .add_plugins((
+                TnuaRapier2dPlugin::default(),
+                TnuaControllerPlugin::default(),
+            ));
     }
 }
 
 fn apply_movement(
+    ccs: Res<CharacterControllerSettings>,
     mut query: Query<(&mut TnuaController, &Speed, &JumpHeight)>,
     input: Res<PlayerInput>,
 ) {
@@ -25,11 +27,7 @@ fn apply_movement(
             controller.basis(TnuaBuiltinWalk {
                 desired_velocity: input.direction_vector().extend(0.) * speed.0,
                 desired_forward: input.direction_vector().extend(0.),
-                float_height: 5.,
-                spring_strengh: 1200.,
-                acceleration: 5000.,
-                air_acceleration: 5000.,
-                ..default()
+                ..ccs.builtin_walk
             });
 
             if input.jump_pressed() {

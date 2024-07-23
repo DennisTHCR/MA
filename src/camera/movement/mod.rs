@@ -17,7 +17,8 @@ impl Plugin for CameraMovementPlugin {
                 (following_movement_system, free_movement_system),
             )
                 .chain(),
-        ).add_plugins(InputMovementPlugin);
+        )
+        .add_plugins(InputMovementPlugin);
     }
 }
 

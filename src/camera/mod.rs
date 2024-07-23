@@ -1,10 +1,11 @@
-pub mod zoom;
 pub mod movement;
+pub mod zoom;
 use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
+use bevy::prelude::*;
 use movement::{
     follow::{FollowMarker, Target},
-    {CameraMovementPlugin, MovementMode},};
-use bevy::prelude::*;
+    {CameraMovementPlugin, MovementMode},
+};
 use zoom::ZoomPlugin;
 
 /// Plugin that handles everything related to managing the camera.

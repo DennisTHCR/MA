@@ -1,7 +1,12 @@
 use bevy::prelude::*;
 use bevy_tnua::prelude::{TnuaBuiltinWalk, TnuaController};
 
-use crate::{camera::{movement::follow::{FollowMarker, Target}, CameraMarker}, input::PlayerInput};
+use crate::{
+    camera::{
+        movement::follow::{FollowMarker, Target},
+        CameraMarker,
+    }, config::CharacterControllerSettings, input::PlayerInput
+};
 
 pub struct StatePlugin;
 
@@ -19,10 +24,14 @@ impl Plugin for StatePlugin {
 pub enum AppState {
     #[default]
     Playing,
-    Editing
+    Editing,
 }
 
-fn state_transition(inputs: Res<PlayerInput>, state: Res<State<AppState>>, mut next_state: ResMut<NextState<AppState>>) {
+fn state_transition(
+    inputs: Res<PlayerInput>,
+    state: Res<State<AppState>>,
+    mut next_state: ResMut<NextState<AppState>>,
+) {
     if inputs.change_mode_pressed() {
         match state.get() {
             AppState::Playing => next_state.set(AppState::Editing),
@@ -31,34 +40,31 @@ fn state_transition(inputs: Res<PlayerInput>, state: Res<State<AppState>>, mut n
     }
 }
 
-// TODO: Remove Camera Follow mode
-// Remove player physics? idk
-fn exit_playing(mut commands: Commands, cameras: Query<Entity, With<CameraMarker>>, mut query: Query<&mut TnuaController, Without<CameraMarker>>) {
+fn exit_playing(
+    mut commands: Commands,
+    cameras: Query<Entity, With<CameraMarker>>,
+    mut query: Query<&mut TnuaController, Without<CameraMarker>>,
+    ccs: Res<CharacterControllerSettings>
+) {
     cameras.iter().for_each(|entity| {
         commands.entity(entity).remove::<FollowMarker>();
     });
-    query
-        .iter_mut()
-        .for_each(|mut controller| {
-            controller.basis(TnuaBuiltinWalk {
-                desired_velocity: Vec3::ZERO,
-                desired_forward: Vec3::ZERO,
-                float_height: 5.,
-                spring_strengh: 1200.,
-                acceleration: 5000.,
-                air_acceleration: 5000.,
-                ..default()
-            });
-        })
+    query.iter_mut().for_each(|mut controller| {
+        controller.basis(TnuaBuiltinWalk {
+            desired_velocity: Vec3::ZERO,
+            desired_forward: Vec3::ZERO,
+            ..ccs.builtin_walk
+        });
+    })
 }
 
 fn enter_playing(mut commands: Commands, cameras: Query<Entity, With<CameraMarker>>) {
     cameras.iter().for_each(|entity| {
-        commands.entity(entity).insert(FollowMarker::new(Target::Player));
+        commands
+            .entity(entity)
+            .insert(FollowMarker::new(Target::Player));
     })
 }
 
 // TODO: Make Camera move through arrow keys / dragging or sth idk
-fn enter_editing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {
-    
-}
+fn enter_editing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {}

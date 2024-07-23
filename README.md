@@ -15,3 +15,4 @@ My final project for my Matura Paper.
     - [ ] Implement Grid Snap Placement
     - [ ] Implement Serde (Loading, Saving)
 - [ ] Implement Settings Screen (to toggle features)
+- [ ] Implement zoom out / in depending on Player speed

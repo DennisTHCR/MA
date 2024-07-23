@@ -1,23 +1,25 @@
 #![windows_subsystem = "windows"]
 mod camera;
+mod config;
+mod game_logic;
 mod input;
 mod level_management;
 mod player;
-mod utilities;
-mod game_logic;
 mod states;
+mod utilities;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rapier2d::prelude::*;
 use camera::CameraPlugin;
+use config::ConfigPlugin;
+use game_logic::GameLogicPlugin;
 use input::InputPlugin;
 use level_management::LevelManagementPlugin;
 use player::PlayerPlugin;
-use utilities::UtilitiesPlugin;
-use game_logic::GameLogicPlugin;
 use states::StatePlugin;
+use utilities::UtilitiesPlugin;
 
 fn main() {
     App::new()
@@ -33,6 +35,7 @@ fn main() {
             StatePlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
             RapierDebugRenderPlugin::default(),
+            ConfigPlugin,
         ))
         .run();
 }
