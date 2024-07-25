@@ -1,4 +1,3 @@
-#![windows_subsystem = "windows"]
 mod camera;
 mod config;
 mod game_logic;
@@ -34,7 +33,6 @@ fn main() {
             GameLogicPlugin,
             StatePlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
-            RapierDebugRenderPlugin::default(),
             ConfigPlugin,
         ))
         .run();

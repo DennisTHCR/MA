@@ -8,7 +8,8 @@ pub struct ConfigPlugin;
 impl Plugin for ConfigPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(CharacterControllerSettings::default())
-           .insert_resource(PlayerSettings::default());
+            .insert_resource(PlayerSettings::default())
+            .insert_resource(LevelSettings::default());
     }
 }
 
@@ -26,7 +27,7 @@ impl Default for CharacterControllerSettings {
                 acceleration: 5000.,
                 air_acceleration: 5000.,
                 ..default()
-            }
+            },
         }
     }
 }
@@ -35,7 +36,6 @@ impl Default for CharacterControllerSettings {
 pub struct PlayerSettings {
     pub player_bundle: PlayerBundle,
     pub sensor_collider_size: Vec2,
-    pub spawn_location: Transform,
     pub collider_size: Vec2,
 }
 
@@ -50,7 +50,21 @@ impl Default for PlayerSettings {
             },
             collider_size: Vec2::new(120., 140.),
             sensor_collider_size: Vec2::new(115., 135.),
-            spawn_location: Transform::from_xyz(0., 30., 10.)
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct LevelSettings {
+    pub death_height: f32,
+    pub spawn_location: Transform,
+}
+
+impl Default for LevelSettings {
+    fn default() -> Self {
+        LevelSettings {
+            death_height: -100.,
+            spawn_location: Transform::from_xyz(0., 30., 10.),
         }
     }
 }

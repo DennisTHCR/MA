@@ -1,22 +1,21 @@
-use bevy::prelude::*;
-use bevy_tnua::prelude::{TnuaBuiltinWalk, TnuaController};
+mod editing;
+mod playing;
 
-use crate::{
-    camera::{
-        movement::follow::{FollowMarker, Target},
-        CameraMarker,
-    }, config::CharacterControllerSettings, input::PlayerInput
-};
+use bevy::prelude::*;
+
+use crate::input::PlayerInput;
+
+use editing::EditingPlugin;
+use playing::PlayingPlugin;
 
 pub struct StatePlugin;
 
 impl Plugin for StatePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
-            .add_systems(Update, state_transition)
-            .add_systems(OnExit(AppState::Playing), exit_playing)
-            .add_systems(OnEnter(AppState::Playing), enter_playing)
-            .add_systems(OnEnter(AppState::Editing), enter_editing);
+            .add_plugins(PlayingPlugin)
+            .add_plugins(EditingPlugin)
+            .add_systems(Update, state_transition);
     }
 }
 
@@ -39,32 +38,3 @@ fn state_transition(
         }
     }
 }
-
-fn exit_playing(
-    mut commands: Commands,
-    cameras: Query<Entity, With<CameraMarker>>,
-    mut query: Query<&mut TnuaController, Without<CameraMarker>>,
-    ccs: Res<CharacterControllerSettings>
-) {
-    cameras.iter().for_each(|entity| {
-        commands.entity(entity).remove::<FollowMarker>();
-    });
-    query.iter_mut().for_each(|mut controller| {
-        controller.basis(TnuaBuiltinWalk {
-            desired_velocity: Vec3::ZERO,
-            desired_forward: Vec3::ZERO,
-            ..ccs.builtin_walk
-        });
-    })
-}
-
-fn enter_playing(mut commands: Commands, cameras: Query<Entity, With<CameraMarker>>) {
-    cameras.iter().for_each(|entity| {
-        commands
-            .entity(entity)
-            .insert(FollowMarker::new(Target::Player));
-    })
-}
-
-// TODO: Make Camera move through arrow keys / dragging or sth idk
-fn enter_editing(mut commands: Commands, query: Query<Entity, With<CameraMarker>>) {}

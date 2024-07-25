@@ -23,6 +23,7 @@ impl Plugin for CameraMovementPlugin {
 }
 
 /// Enum to decide the movement mode.
+#[allow(dead_code)]
 #[derive(Component, Default)]
 pub enum MovementMode {
     #[default]
