@@ -18,12 +18,12 @@ impl Plugin for PlayerMovementPlugin {
 
 fn apply_movement(
     ccs: Res<CharacterControllerSettings>,
-    mut query: Query<(&mut TnuaController, &Speed, &JumpHeight)>,
+    mut query: Query<(&mut TnuaController, &Speed, &JumpHeight, &mut Sprite)>,
     input: Res<PlayerInput>,
 ) {
     query
         .iter_mut()
-        .for_each(|(mut controller, speed, jump_height)| {
+        .for_each(|(mut controller, speed, jump_height, mut sprite)| {
             controller.basis(TnuaBuiltinWalk {
                 desired_velocity: input.direction_vector().extend(0.) * speed.0,
                 desired_forward: input.direction_vector().extend(0.),
@@ -39,6 +39,14 @@ fn apply_movement(
 
             if input.crouch_pressed() {
                 controller.action(TnuaBuiltinCrouch::default());
+            }
+
+            let x = input.direction_vector().x;
+
+            if x > 0. {
+                sprite.flip_x = false
+            } else if x < 0. {
+                sprite.flip_x = true
             }
         })
 }
