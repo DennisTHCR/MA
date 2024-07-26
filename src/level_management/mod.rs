@@ -19,7 +19,7 @@ impl Plugin for LevelManagementPlugin {
 // TODO: Add enum with tile names (possibly linked to texture handle immediately?)
 
 fn load_level(mut level: ResMut<Level>, asset_server: Res<AssetServer>) {
-    level.0.push(Block::new(0., 0., 1000., 100.));
+    level.0.push(Block::new(0., -200., 1000., 100.));
     level.0.push(Block::new(1300., 100., 100., 100.));
     level.0.push(Block::new_textured(
         1500.,

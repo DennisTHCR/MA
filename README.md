@@ -10,7 +10,7 @@ My final project for my Matura Paper.
 - [ ] Implement Level Editor
     - [x] Add Gamestate
     - [x] Add Input Based Camera Movement
-    - [ ] Add Lines To Help (Death line, spawn position)
+    - [x] Add Lines To Help (Death line, spawn position)
     - [ ] Add Block Selection (right click to switch blocks)
     - [ ] Implement Grid Snap Placement
     - [ ] Implement Serde (Loading, Saving)
