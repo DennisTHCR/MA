@@ -11,9 +11,10 @@ My final project for my Matura Paper.
     - [x] Add Gamestate
     - [x] Add Input Based Camera Movement
     - [x] Add Lines To Help (Death line, spawn position)
-    - [ ] Add Block Following Cursor in Edit Mode
+    - [x] Add Block Following Cursor in Edit Mode
     - [ ] Add Block Selection (right click to switch blocks)
     - [ ] Implement Grid Snap Placement
     - [ ] Implement Serde (Loading, Saving)
 - [ ] Implement Settings Screen (to toggle features)
+- [ ] Implement Idle, Walk and Jump animations
 - [ ] Implement zoom out / in depending on Player speed
