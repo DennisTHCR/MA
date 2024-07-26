@@ -24,6 +24,7 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(ImagePlugin::default_nearest()),
+            ConfigPlugin,
             CameraPlugin,
             UtilitiesPlugin,
             WorldInspectorPlugin::new(),
@@ -33,7 +34,6 @@ fn main() {
             GameLogicPlugin,
             StatePlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
-            ConfigPlugin,
         ))
         .run();
 }

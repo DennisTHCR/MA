@@ -2,5 +2,4 @@ debug/
 target/
 
 **/*.rs.bk
-
-docs/.obsidian/
+.idea/
