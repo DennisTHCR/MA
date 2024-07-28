@@ -9,24 +9,31 @@ impl Plugin for InputPlugin {
     }
 }
 
-fn handle_input(input: Res<ButtonInput<KeyCode>>, mut player_input: ResMut<PlayerInput>) {
-    player_input.jump = input.just_pressed(KeyCode::Space)
-        || input.just_pressed(KeyCode::ArrowUp)
-        || input.just_pressed(KeyCode::KeyW);
-    player_input.up = input.pressed(KeyCode::Space)
-        || input.pressed(KeyCode::ArrowUp)
-        || input.pressed(KeyCode::KeyW);
-    player_input.crouch = input.just_pressed(KeyCode::ShiftLeft)
-        || input.just_pressed(KeyCode::ShiftRight)
-        || input.just_pressed(KeyCode::ArrowDown)
-        || input.just_pressed(KeyCode::KeyS);
-    player_input.down = input.pressed(KeyCode::ShiftLeft)
-        || input.pressed(KeyCode::ShiftRight)
-        || input.pressed(KeyCode::ArrowDown)
-        || input.pressed(KeyCode::KeyS);
-    player_input.left = input.pressed(KeyCode::ArrowLeft) || input.pressed(KeyCode::KeyA);
-    player_input.right = input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::KeyD);
-    player_input.change_mode = input.just_pressed(KeyCode::KeyG);
+fn handle_input(
+    kb: Res<ButtonInput<KeyCode>>,
+    mouse: Res<ButtonInput<MouseButton>>,
+    mut player_input: ResMut<PlayerInput>,
+) {
+    player_input.jump = kb.just_pressed(KeyCode::Space)
+        || kb.just_pressed(KeyCode::ArrowUp)
+        || kb.just_pressed(KeyCode::KeyW);
+    player_input.up =
+        kb.pressed(KeyCode::Space) || kb.pressed(KeyCode::ArrowUp) || kb.pressed(KeyCode::KeyW);
+    player_input.crouch = kb.just_pressed(KeyCode::ShiftLeft)
+        || kb.just_pressed(KeyCode::ShiftRight)
+        || kb.just_pressed(KeyCode::ArrowDown)
+        || kb.just_pressed(KeyCode::KeyS);
+    player_input.down = kb.pressed(KeyCode::ShiftLeft)
+        || kb.pressed(KeyCode::ShiftRight)
+        || kb.pressed(KeyCode::ArrowDown)
+        || kb.pressed(KeyCode::KeyS);
+    player_input.left = kb.pressed(KeyCode::ArrowLeft) || kb.pressed(KeyCode::KeyA);
+    player_input.right = kb.pressed(KeyCode::ArrowRight) || kb.pressed(KeyCode::KeyD);
+    player_input.change_mode = kb.just_pressed(KeyCode::KeyG);
+    player_input.left_clicked = mouse.just_pressed(MouseButton::Left);
+    player_input.left_click_held = mouse.pressed(MouseButton::Left);
+    player_input.right_clicked = mouse.just_pressed(MouseButton::Right);
+    player_input.right_click_held = mouse.pressed(MouseButton::Right);
 }
 
 #[allow(unused)]
@@ -39,6 +46,10 @@ pub struct PlayerInput {
     jump: bool,
     crouch: bool,
     change_mode: bool,
+    right_clicked: bool,
+    right_click_held: bool,
+    left_clicked: bool,
+    left_click_held: bool,
 }
 
 #[allow(unused)]
@@ -81,5 +92,13 @@ impl PlayerInput {
 
     pub fn change_mode_pressed(self) -> bool {
         self.change_mode
+    }
+
+    pub fn right_clicked(self) -> bool {
+        self.right_clicked
+    }
+
+    pub fn left_clicked(self) -> bool {
+        self.left_clicked
     }
 }

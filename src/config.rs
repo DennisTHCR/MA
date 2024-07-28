@@ -9,7 +9,8 @@ impl Plugin for ConfigPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(CharacterControllerSettings::default())
             .insert_resource(PlayerSettings::default())
-            .insert_resource(LevelSettings::default());
+            .insert_resource(LevelSettings::default())
+            .insert_resource(CameraSettings::default());
     }
 }
 
@@ -22,7 +23,7 @@ impl Default for CharacterControllerSettings {
     fn default() -> Self {
         CharacterControllerSettings {
             builtin_walk: TnuaBuiltinWalk {
-                float_height: 5.,
+                float_height: 0.4,
                 spring_strengh: 1200.,
                 acceleration: 5000.,
                 air_acceleration: 5000.,
@@ -43,13 +44,13 @@ impl Default for PlayerSettings {
     fn default() -> Self {
         PlayerSettings {
             player_bundle: PlayerBundle {
-                jump_height: JumpHeight(200.),
-                speed: Speed(1000.),
+                jump_height: JumpHeight(60.),
+                speed: Speed(200.),
                 name: Name::new("Player"),
                 ..default()
             },
-            collider_size: Vec2::new(120., 140.),
-            sensor_collider_size: Vec2::new(115., 135.),
+            collider_size: Vec2::new(12., 14.),
+            sensor_collider_size: Vec2::new(11.5, 13.5),
         }
     }
 }
@@ -65,6 +66,19 @@ impl Default for LevelSettings {
         LevelSettings {
             death_height: -100.,
             spawn_location: Transform::from_xyz(0., 30., 10.),
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct CameraSettings {
+    pub default_zoom: f32,
+}
+
+impl Default for CameraSettings {
+    fn default() -> Self {
+        CameraSettings {
+            default_zoom: 7.,
         }
     }
 }

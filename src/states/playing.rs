@@ -43,7 +43,7 @@ fn enter_playing(
     ls: Res<LevelSettings>,
     ps: Res<PlayerSettings>,
 ) {
-    let handle = asset_server.load(Path::new("test.png"));
+    let handle = asset_server.load(Path::new("CHARACTER.png"));
     commands.spawn((
         SpriteBundle {
             texture: handle,

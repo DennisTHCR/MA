@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::path::Path;
 
 use crate::utilities::assets::{init_resources, ColorResource};
@@ -19,15 +20,48 @@ impl Plugin for LevelManagementPlugin {
 // TODO: Add enum with tile names (possibly linked to texture handle immediately?)
 
 fn load_level(mut level: ResMut<Level>, asset_server: Res<AssetServer>) {
-    level.0.push(Block::new(0., -200., 1000., 100.));
-    level.0.push(Block::new(1300., 100., 100., 100.));
     level.0.push(Block::new_textured(
-        1500.,
-        100.,
-        160.,
-        160.,
-        asset_server.load(Path::new("floor_middle.png")),
-    ))
+        0.,
+        0.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_MIDDLE.png")),
+    ));
+    level.0.push(Block::new_textured(
+        -16.,
+        0.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_LEFT.png")),
+    ));
+    level.0.push(Block::new_textured(
+        16.,
+        0.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_RIGHT.png")),
+    ));
+    level.0.push(Block::new_textured(
+        0.,
+        -16.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_MIDDLE.png")),
+    ));
+    level.0.push(Block::new_textured(
+        -16.,
+        -16.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_LEFT.png")),
+    ));
+    level.0.push(Block::new_textured(
+        16.,
+        -16.,
+        16.,
+        16.,
+        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_RIGHT.png")),
+    ));
 }
 
 fn setup_level(
@@ -67,6 +101,21 @@ fn setup_level(
 
 #[derive(Resource)]
 struct Level(Vec<Block>);
+
+#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone)]
+pub enum BlockMaterial {
+    GRASS_GREEN,
+    GRASS_ORANGE,
+    GRASS_PINK,
+    WOOD,
+    STEEL,
+    BRONZE,
+    GOLD,
+    BRICK,
+}
+
+#[derive(Resource)]
+pub struct ImageHandles(pub HashMap<BlockMaterial, Handle<Image>>);
 
 struct Block {
     pos: Vec2,

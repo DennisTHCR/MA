@@ -2,13 +2,14 @@ use std::path::Path;
 
 use bevy::{prelude::*, sprite::Mesh2dHandle};
 
+use super::AppState;
+use crate::input::PlayerInput;
+use crate::level_management::{BlockMaterial, ImageHandles};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
     utilities::assets::ColorResource,
 };
-
-use super::AppState;
 
 pub struct EditingPlugin;
 
@@ -16,7 +17,10 @@ impl Plugin for EditingPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Editing), enter_editing)
             .add_systems(OnExit(AppState::Editing), exit_editing)
-            .add_systems(Update, move_block_to_cursor.run_if(in_state(AppState::Editing)));
+            .add_systems(
+                Update,
+                move_block_to_cursor.run_if(in_state(AppState::Editing)),
+            );
     }
 }
 
@@ -29,7 +33,11 @@ struct DeathLineMarker;
 #[derive(Component)]
 struct PlacingBlockMarker;
 
-fn move_block_to_cursor(mut block_transform: Query<&mut Transform, With<PlacingBlockMarker>>, camera_query: Query<(&Camera, &GlobalTransform)>, windows: Query<&Window>) {
+fn move_block_to_cursor(
+    mut block_transform: Query<&mut Transform, With<PlacingBlockMarker>>,
+    camera_query: Query<(&Camera, &GlobalTransform)>,
+    windows: Query<&Window>,
+) {
     let (camera, camera_transform) = camera_query.single();
     let Some(cursor_position) = windows.single().cursor_position() else {
         return;
@@ -39,21 +47,43 @@ fn move_block_to_cursor(mut block_transform: Query<&mut Transform, With<PlacingB
         return;
     };
     // TODO: FIX THIS IDK?
-    let mut x;
+    let x;
     if point.x % 160. <= 80. {
         x = point.x - (point.x % 160.);
     } else {
         x = point.x + (160. - point.x % 160.);
     }
-    let mut y;
+    let y;
     if point.y % 160. <= 80. {
         y = point.y - (point.y % 160.);
     } else {
         y = point.y + (160. - point.y % 160.);
     }
-    let grid_point = Vec2::new(x,y);
+    let grid_point = Vec2::new(x, y);
 
     block_transform.single_mut().translation = grid_point.extend(10.);
+}
+
+fn change_block_type(
+    mut query: Query<(&mut Handle<Image>, &mut BlockMaterial), With<PlacingBlockMarker>>,
+    input: Res<PlayerInput>,
+    textures: Res<ImageHandles>,
+) {
+    if input.right_clicked() {
+        query.iter_mut().for_each(|(mut image, mut material)| {
+            *material = match *material {
+                BlockMaterial::GRASS_GREEN => BlockMaterial::GRASS_ORANGE,
+                BlockMaterial::GRASS_ORANGE => BlockMaterial::GRASS_PINK,
+                BlockMaterial::GRASS_PINK => BlockMaterial::WOOD,
+                BlockMaterial::WOOD => BlockMaterial::STEEL,
+                BlockMaterial::STEEL => BlockMaterial::BRONZE,
+                BlockMaterial::BRONZE => BlockMaterial::BRICK,
+                BlockMaterial::BRICK => BlockMaterial::GOLD,
+                BlockMaterial::GOLD => BlockMaterial::GRASS_GREEN,
+            };
+            *image = textures.0.get(material.as_ref()).unwrap().clone();
+        })
+    }
 }
 
 fn enter_editing(
@@ -61,14 +91,15 @@ fn enter_editing(
     mut query: Query<&mut MovementMode, With<CameraMarker>>,
     mut commands: Commands,
     ls: Res<LevelSettings>,
-    asset_server: Res<AssetServer>,
     materials: Res<ColorResource>,
     ps: Res<PlayerSettings>,
+    textures: Res<ImageHandles>,
+    asset_server: Res<AssetServer>,
 ) {
     query.iter_mut().for_each(|mut movement_mode| {
         *movement_mode = MovementMode::Input;
     });
-    let character_handle = asset_server.load(Path::new("test.png"));
+    let character_handle = asset_server.load(Path::new("CHARACTER.png"));
     commands.spawn((
         SpriteBundle {
             texture: character_handle,
@@ -87,12 +118,13 @@ fn enter_editing(
         },
         DeathLineMarker,
     ));
-    let block_handle = asset_server.load(Path::new("floor_middle.png"));
+    let block_handle = textures.0.get(&BlockMaterial::GRASS_GREEN).unwrap().clone();
     commands.spawn((
         SpriteBundle {
             texture: block_handle,
             ..default()
         },
+        BlockMaterial::GRASS_GREEN,
         PlacingBlockMarker,
     ));
 }
