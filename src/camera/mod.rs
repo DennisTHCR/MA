@@ -1,5 +1,6 @@
 pub mod movement;
 pub mod zoom;
+use crate::config::CameraSettings;
 use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
 use bevy::prelude::*;
 use movement::{
@@ -7,7 +8,6 @@ use movement::{
     {CameraMovementPlugin, MovementMode},
 };
 use zoom::ZoomPlugin;
-use crate::config::CameraSettings;
 
 /// Plugin that handles everything related to managing the camera.
 pub struct CameraPlugin;
@@ -24,12 +24,18 @@ impl Plugin for CameraPlugin {
         app.add_plugins((ZoomPlugin, CameraMovementPlugin))
             .insert_resource(CameraSpeed(50.))
             .add_systems(Startup, setup)
-            .world_mut().spawn(bundle);
+            .world_mut()
+            .spawn(bundle);
     }
 }
 
-fn setup(camera_settings: Res<CameraSettings>, mut time_ease: Query<&mut TimeEase, With<CameraMarker>>) {
-    time_ease.single_mut().set_end_val(camera_settings.default_zoom);
+fn setup(
+    camera_settings: Res<CameraSettings>,
+    mut time_ease: Query<&mut TimeEase, With<CameraMarker>>,
+) {
+    time_ease
+        .single_mut()
+        .set_end_val(camera_settings.default_zoom);
 }
 
 // Structs

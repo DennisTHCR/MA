@@ -15,6 +15,7 @@ My final project for my Matura Paper.
     - [ ] Add Block Selection (right click to switch blocks)
     - [ ] Implement Grid Snap Placement
     - [ ] Implement Serde (Loading, Saving)
+- [ ] Add Timer and limited lives
 - [ ] Implement Settings Screen (to toggle features)
 - [ ] Implement Idle, Walk and Jump animations
 - [ ] Implement zoom out / in depending on Player speed

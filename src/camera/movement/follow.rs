@@ -1,7 +1,7 @@
-use bevy::{prelude::*, window::PrimaryWindow};
-use std::collections::HashMap;
 use crate::camera::CameraMarker;
 use crate::utilities::easing::TimeEase;
+use bevy::{prelude::*, window::PrimaryWindow};
+use std::collections::HashMap;
 
 #[derive(Component)]
 pub struct FollowMarker(Target);

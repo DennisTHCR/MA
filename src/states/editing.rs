@@ -4,11 +4,11 @@ use bevy::{prelude::*, sprite::Mesh2dHandle};
 
 use super::AppState;
 use crate::input::PlayerInput;
-use crate::level_management::{BlockMaterial, ImageHandles};
+use crate::utilities::assets::{Column, Row};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
-    utilities::assets::ColorResource,
+    utilities::assets::{ColorResource, ImageHandles, Material},
 };
 
 pub struct EditingPlugin;
@@ -19,7 +19,7 @@ impl Plugin for EditingPlugin {
             .add_systems(OnExit(AppState::Editing), exit_editing)
             .add_systems(
                 Update,
-                move_block_to_cursor.run_if(in_state(AppState::Editing)),
+                (move_block_to_cursor, change_block_type).run_if(in_state(AppState::Editing)),
             );
     }
 }
@@ -46,42 +46,36 @@ fn move_block_to_cursor(
     let Some(point) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
         return;
     };
-    // TODO: FIX THIS IDK?
-    let x;
-    if point.x % 160. <= 80. {
-        x = point.x - (point.x % 160.);
-    } else {
-        x = point.x + (160. - point.x % 160.);
-    }
-    let y;
-    if point.y % 160. <= 80. {
-        y = point.y - (point.y % 160.);
-    } else {
-        y = point.y + (160. - point.y % 160.);
-    }
+
+    let x = point.x - ((point.x % 16.) + 16.) % 16. + 8.;
+    let y = point.y - ((point.y % 16.) + 16.) % 16. + 8.;
     let grid_point = Vec2::new(x, y);
 
     block_transform.single_mut().translation = grid_point.extend(10.);
 }
 
 fn change_block_type(
-    mut query: Query<(&mut Handle<Image>, &mut BlockMaterial), With<PlacingBlockMarker>>,
+    mut query: Query<(&mut Handle<Image>, &mut Material), With<PlacingBlockMarker>>,
     input: Res<PlayerInput>,
     textures: Res<ImageHandles>,
 ) {
     if input.right_clicked() {
         query.iter_mut().for_each(|(mut image, mut material)| {
             *material = match *material {
-                BlockMaterial::GRASS_GREEN => BlockMaterial::GRASS_ORANGE,
-                BlockMaterial::GRASS_ORANGE => BlockMaterial::GRASS_PINK,
-                BlockMaterial::GRASS_PINK => BlockMaterial::WOOD,
-                BlockMaterial::WOOD => BlockMaterial::STEEL,
-                BlockMaterial::STEEL => BlockMaterial::BRONZE,
-                BlockMaterial::BRONZE => BlockMaterial::BRICK,
-                BlockMaterial::BRICK => BlockMaterial::GOLD,
-                BlockMaterial::GOLD => BlockMaterial::GRASS_GREEN,
+                Material::GRASS_GREEN => Material::GRASS_ORANGE,
+                Material::GRASS_ORANGE => Material::GRASS_PINK,
+                Material::GRASS_PINK => Material::WOOD,
+                Material::WOOD => Material::STEEL,
+                Material::STEEL => Material::BRONZE,
+                Material::BRONZE => Material::BRICK,
+                Material::BRICK => Material::GOLD,
+                Material::GOLD => Material::GRASS_GREEN,
             };
-            *image = textures.0.get(material.as_ref()).unwrap().clone();
+            *image = textures
+                .0
+                .get(&(*material, Row::TOP, Column::LEFT))
+                .unwrap()
+                .clone();
         })
     }
 }
@@ -118,13 +112,17 @@ fn enter_editing(
         },
         DeathLineMarker,
     ));
-    let block_handle = textures.0.get(&BlockMaterial::GRASS_GREEN).unwrap().clone();
+    let block_handle = textures
+        .0
+        .get(&(Material::GRASS_GREEN, Row::TOP, Column::LEFT))
+        .unwrap()
+        .clone();
     commands.spawn((
         SpriteBundle {
             texture: block_handle,
             ..default()
         },
-        BlockMaterial::GRASS_GREEN,
+        Material::GRASS_GREEN,
         PlacingBlockMarker,
     ));
 }

@@ -77,8 +77,6 @@ pub struct CameraSettings {
 
 impl Default for CameraSettings {
     fn default() -> Self {
-        CameraSettings {
-            default_zoom: 7.,
-        }
+        CameraSettings { default_zoom: 7. }
     }
 }

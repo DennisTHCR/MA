@@ -1,7 +1,6 @@
-use std::collections::HashMap;
 use std::path::Path;
 
-use crate::utilities::assets::{init_resources, ColorResource};
+use crate::utilities::assets::{init, ColorResource};
 use bevy::{prelude::*, sprite::Mesh2dHandle};
 use bevy_rapier2d::geometry::Collider;
 
@@ -9,15 +8,12 @@ pub struct LevelManagementPlugin;
 
 impl Plugin for LevelManagementPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Level(Vec::new())).add_systems(
-            Startup,
-            (load_level, setup_level.after(init_resources)).chain(),
-        );
+        app.insert_resource(Level(Vec::new()))
+            .add_systems(Startup, (load_level, setup_level.after(init)).chain());
     }
 }
 
-// TODO: Add array/list resource(/component for multiple levels?) containing positions and sizes for colliders to be added (and textures?)
-// TODO: Add enum with tile names (possibly linked to texture handle immediately?)
+// TODO: Add array/list resource containing blocks (x, y) -> Material
 
 fn load_level(mut level: ResMut<Level>, asset_server: Res<AssetServer>) {
     level.0.push(Block::new_textured(
@@ -101,21 +97,6 @@ fn setup_level(
 
 #[derive(Resource)]
 struct Level(Vec<Block>);
-
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone)]
-pub enum BlockMaterial {
-    GRASS_GREEN,
-    GRASS_ORANGE,
-    GRASS_PINK,
-    WOOD,
-    STEEL,
-    BRONZE,
-    GOLD,
-    BRICK,
-}
-
-#[derive(Resource)]
-pub struct ImageHandles(pub HashMap<BlockMaterial, Handle<Image>>);
 
 struct Block {
     pos: Vec2,
