@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use bevy::{prelude::*, sprite::Mesh2dHandle};
-
+use bevy_rapier2d::prelude::Collider;
 use super::AppState;
 use crate::input::PlayerInput;
 use crate::utilities::assets::{Column, Row};
@@ -10,6 +10,7 @@ use crate::{
     config::{LevelSettings, PlayerSettings},
     utilities::assets::{ColorResource, ImageHandles, Material},
 };
+use crate::level_management::{LevelEntities, LevelMaterials};
 
 pub struct EditingPlugin;
 
@@ -19,7 +20,7 @@ impl Plugin for EditingPlugin {
             .add_systems(OnExit(AppState::Editing), exit_editing)
             .add_systems(
                 Update,
-                (move_block_to_cursor, change_block_type).run_if(in_state(AppState::Editing)),
+                (move_block_to_cursor, change_block_type, place_block).run_if(in_state(AppState::Editing)),
             );
     }
 }
@@ -52,6 +53,55 @@ fn move_block_to_cursor(
     let grid_point = Vec2::new(x, y);
 
     block_transform.single_mut().translation = grid_point.extend(10.);
+}
+
+fn place_block(
+    input: Res<PlayerInput>,
+    mut level_materials: ResMut<LevelMaterials>,
+    mut level_entities: ResMut<LevelEntities>,
+    query: Query<(&Transform, &Material), With<PlacingBlockMarker>>,
+    mut commands: Commands,
+    image_handles: Res<ImageHandles>,
+) {
+    if !input.left_clicked() {
+        return
+    }
+    let (transform, material) = query.single();
+    let mut translation = transform.translation;
+    translation.z = 0.;
+    let position = ((translation.x as i32 - 8) / 16, (translation.y as i32 - 8) / 16);
+    let (x,y) = position;
+    println!("{:?}", position);
+    level_materials.0.insert(position, Some(material.clone()));
+    let row = level_materials.get_row(position.clone());
+    let column = level_materials.get_column(position.clone());
+    let entity = commands.spawn((
+        SpriteBundle {
+            texture: image_handles.0.get(&(material.clone(), row, column)).unwrap().clone(),
+            transform: Transform::from_translation(translation),
+            ..default()
+        },
+        Collider::cuboid(16. / 2., 16. / 2.),
+        Name::new("Textured Block"),
+    ));
+    level_entities.0.insert(position.clone(), entity.id());
+    let neighbours = [(x,y+1), (x,y-1), (x+1, y), (x-1, y)];
+    neighbours.iter().for_each(|pos| {
+        let id = level_entities.0.get(pos);
+        if id.is_none() {
+            return
+        }
+        let mut entity = commands.entity(id.unwrap().clone());
+        let row = level_materials.get_row(pos.clone());
+        let column = level_materials.get_column(pos.clone());
+        let material = level_materials.0.get(pos).unwrap();
+        if material.is_none() {
+            entity.remove::<Handle<Image>>();
+            return
+        }
+        let texture = image_handles.0.get(&(material.unwrap().clone(), row, column)).unwrap().clone();
+        entity.insert(texture);
+    })
 }
 
 fn change_block_type(

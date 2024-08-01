@@ -9,6 +9,7 @@ pub struct LevelManagementPlugin;
 impl Plugin for LevelManagementPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(LevelMaterials(HashMap::new()))
+            .insert_resource(LevelEntities(HashMap::new()))
             .add_systems(Startup, (load_level, setup_level.after(init)).chain());
     }
 }
@@ -42,14 +43,15 @@ fn load_level(mut level: ResMut<LevelMaterials>) {
 fn setup_level(
     mut commands: Commands,
     image_handles: Res<ImageHandles>,
-    level: ResMut<LevelMaterials>,
+    level_materials: ResMut<LevelMaterials>,
+    mut level_entities: ResMut<LevelEntities>,
 ) {
-    for (position, material) in &level.0 {
+    for (position, material) in &level_materials.0 {
         let world_position = Vec2::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8.);
         if let Some(block) = material {
-            let row = level.get_row(position.clone(), block);
-            let column = level.get_column(position.clone(), block);
-            commands.spawn((
+            let row = level_materials.get_row(position.clone());
+            let column = level_materials.get_column(position.clone());
+            let entity = commands.spawn((
                 SpriteBundle {
                     texture: image_handles.0.get(&(block.clone(), row, column)).unwrap().clone(),
                     transform: Transform::from_translation(world_position.extend(0.)),
@@ -58,12 +60,14 @@ fn setup_level(
                 Collider::cuboid(16. / 2., 16. / 2.),
                 Name::new("Textured Block"),
             ));
+            level_entities.0.insert(*position, entity.id());
         }
     }
 }
 
 impl LevelMaterials {
-    fn get_row(&self, (x,y): (i32, i32), material: &Material) -> Row {
+    pub fn get_row(&self, (x,y): (i32, i32)) -> Row {
+        let material = &self.0.get(&(x,y)).unwrap().unwrap();
         let mut top = self.0.get(&(x, y + 1)).is_some();
         if top {
             top = self.0.get(&(x, y + 1)).unwrap().is_some();
@@ -89,14 +93,15 @@ impl LevelMaterials {
         if !material.is_small() || row == Row::TOP {
             return row;
         }
-        return match self.get_row((x, y + 1), &self.0.get(&(x, y + 1)).unwrap().unwrap()) {
+        return match self.get_row((x, y + 1)) {
             Row::TOP => Row::BOTTOM,
             Row::BOTTOM => Row::TOP,
             Row::CENTER => Row::BOTTOM
         }
     }
 
-    fn get_column(&self, (x,y): (i32, i32), material: &Material) -> Column {
+    pub fn get_column(&self, (x,y): (i32, i32)) -> Column {
+        let material = &self.0.get(&(x,y)).unwrap().unwrap();
         let mut left = self.0.get(&(x - 1, y)).is_some();
         if left {
             left = self.0.get(&(x - 1, y)).unwrap().is_some();
@@ -122,7 +127,7 @@ impl LevelMaterials {
         if !material.is_small() || column == Column::LEFT {
             return column;
         }
-        return match self.get_column((x - 1, y), &self.0.get(&(x - 1, y)).unwrap().unwrap()) {
+        return match self.get_column((x - 1, y)) {
             Column::LEFT => Column::RIGHT,
             Column::RIGHT => Column::LEFT,
             Column::MIDDLE => Column::RIGHT,
