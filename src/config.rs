@@ -23,8 +23,8 @@ impl Default for CharacterControllerSettings {
     fn default() -> Self {
         CharacterControllerSettings {
             builtin_walk: TnuaBuiltinWalk {
-                float_height: 0.4,
-                spring_strengh: 1200.,
+                float_height: 0.5,
+                spring_strengh: 1600.,
                 acceleration: 5000.,
                 air_acceleration: 5000.,
                 ..default()
@@ -44,7 +44,7 @@ impl Default for PlayerSettings {
     fn default() -> Self {
         PlayerSettings {
             player_bundle: PlayerBundle {
-                jump_height: JumpHeight(60.),
+                jump_height: JumpHeight(40.),
                 speed: Speed(200.),
                 name: Name::new("Player"),
                 ..default()

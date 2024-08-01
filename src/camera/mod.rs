@@ -22,7 +22,7 @@ impl Plugin for CameraPlugin {
             MovementMode::Follow,
         );
         app.add_plugins((ZoomPlugin, CameraMovementPlugin))
-            .insert_resource(CameraSpeed(50.))
+            .insert_resource(CameraSpeed(5.))
             .add_systems(Startup, setup)
             .world_mut()
             .spawn(bundle);

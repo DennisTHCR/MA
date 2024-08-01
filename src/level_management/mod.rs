@@ -17,43 +17,43 @@ impl Plugin for LevelManagementPlugin {
 
 fn load_level(mut level: ResMut<Level>, asset_server: Res<AssetServer>) {
     level.0.push(Block::new_textured(
-        0.,
-        0.,
+        8.,
+        8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_MIDDLE.png")),
     ));
     level.0.push(Block::new_textured(
-        -16.,
-        0.,
+        -8.,
+        8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_LEFT.png")),
     ));
     level.0.push(Block::new_textured(
-        16.,
-        0.,
+        24.,
+        8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_RIGHT.png")),
     ));
     level.0.push(Block::new_textured(
-        0.,
-        -16.,
+        8.,
+        -8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_MIDDLE.png")),
     ));
     level.0.push(Block::new_textured(
-        -16.,
-        -16.,
+        -8.,
+        -8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_LEFT.png")),
     ));
     level.0.push(Block::new_textured(
-        16.,
-        -16.,
+        24.,
+        -8.,
         16.,
         16.,
         asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_RIGHT.png")),
