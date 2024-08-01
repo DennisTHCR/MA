@@ -346,7 +346,7 @@ fn ease_circ(ease: &EaseStruct) -> f32 {
     }
 }
 
-/// Easing function that slightly overshoots it's goal, then returns
+/// Easing function that slightly overshoots its goal, then returns
 fn ease_back(ease: &EaseStruct) -> f32 {
     let t = ease.progress_normalized();
     let b = 0.;

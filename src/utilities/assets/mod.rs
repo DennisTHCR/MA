@@ -11,7 +11,7 @@ impl Plugin for AssetPlugin {
     }
 }
 
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr)]
+#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
 pub enum Material {
     GRASS_GREEN,
     GRASS_ORANGE,
@@ -21,6 +21,12 @@ pub enum Material {
     BRONZE,
     GOLD,
     BRICK,
+}
+
+impl Material {
+    pub fn is_small(&self) -> bool {
+        SMALL_MATERIALS.contains(self)
+    }
 }
 
 pub const SMALL_MATERIALS: [Material; 4] = [
@@ -39,14 +45,14 @@ impl Default for ImageHandles {
     }
 }
 
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr)]
+#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
 pub enum Row {
     TOP,
     CENTER,
     BOTTOM,
 }
 
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr)]
+#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
 pub enum Column {
     LEFT,
     MIDDLE,
