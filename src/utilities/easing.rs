@@ -130,7 +130,7 @@ impl Default for TimeEase {
 }
 
 impl EaseStruct {
-    /// Returns a value between 0. and 1., going off of an EaseStruct. TODO: Implement easing functions.
+    /// Returns a value between 0. and 1., going off of an EaseStruct.
     pub fn get_progress_eased(&self) -> f32 {
         match self.easing_function {
             EasingFunction::Sine => ease_sine(self),

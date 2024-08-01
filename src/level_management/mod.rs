@@ -1,102 +1,53 @@
-use std::path::Path;
-
-use crate::utilities::assets::{init, ColorResource};
-use bevy::{prelude::*, sprite::Mesh2dHandle};
+use crate::utilities::assets::{init, ImageHandles, Row, Column};
+use bevy::prelude::*;
+use bevy::utils::HashMap;
 use bevy_rapier2d::geometry::Collider;
+use crate::utilities::assets::Material;
 
 pub struct LevelManagementPlugin;
 
 impl Plugin for LevelManagementPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Level(Vec::new()))
+        app.insert_resource(LevelMaterials(HashMap::new()))
             .add_systems(Startup, (load_level, setup_level.after(init)).chain());
     }
 }
 
 // TODO: Add array/list resource containing blocks (x, y) -> Material
+#[derive(Resource)]
+pub struct LevelMaterials(pub HashMap<(i32, i32), Option<Material>>);
+#[derive(Resource)]
+pub struct LevelEntities(pub HashMap<(i32, i32), Entity>);
 
-fn load_level(mut level: ResMut<Level>, asset_server: Res<AssetServer>) {
-    level.0.push(Block::new_textured(
-        8.,
-        8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_MIDDLE.png")),
-    ));
-    level.0.push(Block::new_textured(
-        -8.,
-        8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_LEFT.png")),
-    ));
-    level.0.push(Block::new_textured(
-        24.,
-        8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_TOP_RIGHT.png")),
-    ));
-    level.0.push(Block::new_textured(
-        8.,
-        -8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_MIDDLE.png")),
-    ));
-    level.0.push(Block::new_textured(
-        -8.,
-        -8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_LEFT.png")),
-    ));
-    level.0.push(Block::new_textured(
-        24.,
-        -8.,
-        16.,
-        16.,
-        asset_server.load(Path::new("GRASS_GREEN/GRASS_GREEN_BOTTOM_RIGHT.png")),
-    ));
+fn load_level(mut level: ResMut<LevelMaterials>) {
+    level.0.insert((0,0), Some(Material::GRASS_GREEN));
+    level.0.insert((-1,0), Some(Material::GRASS_GREEN));
+    level.0.insert((1,0), Some(Material::GRASS_GREEN));
+    level.0.insert((0,-1), Some(Material::GRASS_GREEN));
+    level.0.insert((-1, -1), Some(Material::GRASS_GREEN));
+    level.0.insert((1,-1), Some(Material::GRASS_GREEN));
 }
 
 fn setup_level(
     mut commands: Commands,
-    materials: Res<ColorResource>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    level: Res<Level>,
+    image_handles: Res<ImageHandles>,
+    level: Res<LevelMaterials>,
 ) {
-    for block in &level.0 {
-        if block.texture.is_some() {
+    for (position, material) in &level.0 {
+        let position = Vec2::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8.);
+        if let Some(block) = material {
             commands.spawn((
                 SpriteBundle {
-                    texture: block.texture.clone().unwrap(),
-                    transform: Transform::from_translation(block.pos.extend(0.)),
+                    texture: image_handles.0.get(&(block.clone(), Row::TOP, Column::LEFT)).unwrap().clone(),
+                    transform: Transform::from_translation(position.extend(0.)),
                     ..default()
                 },
-                Collider::cuboid(block.size.x / 2., block.size.y / 2.),
+                Collider::cuboid(16. / 2., 16. / 2.),
                 Name::new("Textured Block"),
-            ));
-        } else {
-            let mesh: Mesh2dHandle = meshes
-                .add(Rectangle::new(block.size.x, block.size.y))
-                .into();
-            commands.spawn((
-                ColorMesh2dBundle {
-                    mesh: mesh.clone(),
-                    material: materials.0[0].0.clone(),
-                    transform: Transform::from_translation(block.pos.extend(0.)),
-                    ..default()
-                },
-                Collider::cuboid(block.size.x / 2., block.size.y / 2.),
-                Name::new("Block"),
             ));
         }
     }
 }
-
-#[derive(Resource)]
-struct Level(Vec<Block>);
 
 struct Block {
     pos: Vec2,
