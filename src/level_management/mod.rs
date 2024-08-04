@@ -15,7 +15,11 @@ impl Plugin for LevelManagementPlugin {
 }
 
 #[derive(Resource)]
-pub struct LevelMaterials(pub HashMap<(i32, i32), Material>);
+pub struct Level {
+    pub material_map: HashMap<(i32, i32), Material>,
+    pub entity_map: HashMap<(i32, i32), Entity>,
+}
+
 #[derive(Resource)]
 pub struct LevelEntities(pub HashMap<(i32, i32), Entity>);
 
@@ -66,6 +70,28 @@ fn setup_level(
 }
 
 impl LevelMaterials {
+    pub fn insert(&mut self, position: (i32, i32), material: Material, mut commands: Commands, image_handles: ImageHandles) {
+        let translation = Vec3::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8., 10.);
+        self.0.insert(position, material.clone());
+        if self.0.get(&position.clone()).is_none() {
+            let row = self.get_row(position.clone());
+            let column = self.get_column(position.clone());
+            let entity = commands.spawn((
+                SpriteBundle {
+                    texture: image_handles.0.get(&(material.clone(), row, column)).expect("Couldn't find image handle for material.").clone(),
+                    transform: Transform::from_translation(translation),
+                    ..default()
+                },
+                Collider::cuboid(16. / 2., 16. / 2.),
+                Name::new("Textured Block"),
+            ));
+            level_entities.0.insert(position.clone(), entity.id());
+        }
+    }
+
+    pub fn remove((x,y): (i32, i32)) {
+
+    }
     pub fn get_row(&self, (x,y): (i32, i32)) -> Row {
         if self.0.get(&(x,y)).is_none() {
             return Row::TOP
