@@ -13,7 +13,7 @@ rustflags = [
   "-Zthreads=0",             # (Nightly) Use improved multithreading with the recommended amount of threads.
 ]
 
-# NOTE: you must install [Mach-O LLD Port](https://lld.llvm.org/MachO/index.html) on mac. you can easily do this by installing llvm which includes lld with the "brew" package manager:
+# NOTE: you must install [Mach-O LLD Port](https://lld.llvm.org/MachO/index.html) on Mac. you can easily do this by installing llvm which includes lld with the "brew" package manager:
 # `brew install llvm`
 [target.x86_64-apple-darwin]
 rustflags = [
@@ -37,6 +37,6 @@ rustflags = [
 ]
 
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
-# In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
+# In most cases the gains are negligible, but if you are on macOS and have slow compile times you should see significant gains.
 [profile.dev]
 debug = 1

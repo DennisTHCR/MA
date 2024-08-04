@@ -71,13 +71,12 @@ fn place_block(
     translation.z = 0.;
     let position = ((translation.x as i32 - 8) / 16, (translation.y as i32 - 8) / 16);
     let (x,y) = position;
-    println!("{:?}", position);
     level_materials.0.insert(position, Some(material.clone()));
     let row = level_materials.get_row(position.clone());
     let column = level_materials.get_column(position.clone());
     let entity = commands.spawn((
         SpriteBundle {
-            texture: image_handles.0.get(&(material.clone(), row, column)).unwrap().clone(),
+            texture: image_handles.0.get(&(material.clone(), row, column)).expect("Couldn't find image handle for material.").clone(),
             transform: Transform::from_translation(translation),
             ..default()
         },
@@ -88,19 +87,18 @@ fn place_block(
     let neighbours = [(x,y+1), (x,y-1), (x+1, y), (x-1, y)];
     neighbours.iter().for_each(|pos| {
         let id = level_entities.0.get(pos);
-        if id.is_none() {
-            return
+        if !id.is_none() {
+            let mut entity = commands.entity(*id.expect("Couldn't find ID."));
+            let row = level_materials.get_row(pos.clone());
+            let column = level_materials.get_column(pos.clone());
+            let material = level_materials.0.get(pos).expect("No block at that position.").clone();
+            if material.is_none() {
+                entity.remove::<Handle<Image>>();
+            } else {
+                let texture = image_handles.0.get(&(material.expect("Couldn't find material."), row, column)).expect("Couldn't find image handle.").clone();
+                entity.insert(texture);
+            }
         }
-        let mut entity = commands.entity(id.unwrap().clone());
-        let row = level_materials.get_row(pos.clone());
-        let column = level_materials.get_column(pos.clone());
-        let material = level_materials.0.get(pos).unwrap();
-        if material.is_none() {
-            entity.remove::<Handle<Image>>();
-            return
-        }
-        let texture = image_handles.0.get(&(material.unwrap().clone(), row, column)).unwrap().clone();
-        entity.insert(texture);
     })
 }
 

@@ -67,6 +67,9 @@ fn setup_level(
 
 impl LevelMaterials {
     pub fn get_row(&self, (x,y): (i32, i32)) -> Row {
+        if self.0.get(&(x,y)).is_none() || self.0.get(&(x,y)).unwrap().is_none() {
+            return Row::TOP
+        }
         let material = &self.0.get(&(x,y)).unwrap().unwrap();
         let mut top = self.0.get(&(x, y + 1)).is_some();
         if top {
@@ -101,6 +104,9 @@ impl LevelMaterials {
     }
 
     pub fn get_column(&self, (x,y): (i32, i32)) -> Column {
+        if self.0.get(&(x,y)).is_none() || self.0.get(&(x,y)).unwrap().is_none() {
+            return Column::LEFT
+        }
         let material = &self.0.get(&(x,y)).unwrap().unwrap();
         let mut left = self.0.get(&(x - 1, y)).is_some();
         if left {
