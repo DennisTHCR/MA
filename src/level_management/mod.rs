@@ -8,9 +8,11 @@ pub struct LevelManagementPlugin;
 
 impl Plugin for LevelManagementPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(LevelMaterials(HashMap::new()))
-            .insert_resource(LevelEntities(HashMap::new()))
-            .add_systems(Startup, (load_level, setup_level.after(init)).chain());
+        app.insert_resource(Level {
+            material_map: HashMap::new(),
+            entity_map: HashMap::new(),
+        })
+            .add_systems(Startup, (load_level, setup_level).chain().after(init));
     }
 }
 
@@ -20,60 +22,54 @@ pub struct Level {
     pub entity_map: HashMap<(i32, i32), Entity>,
 }
 
-#[derive(Resource)]
-pub struct LevelEntities(pub HashMap<(i32, i32), Entity>);
-
-fn load_level(mut level: ResMut<LevelMaterials>) {
-    level.0.insert((0,0), Material::GRASS_GREEN);
-    level.0.insert((-1,0), Material::GRASS_GREEN);
-    level.0.insert((1,0), Material::GRASS_GREEN);
-    level.0.insert((0,-1), Material::GRASS_GREEN);
-    level.0.insert((-1, -1), Material::GRASS_GREEN);
-    level.0.insert((1,-1), Material::GRASS_GREEN);
-    level.0.insert((0,-2), Material::GRASS_GREEN);
-    level.0.insert((-1, -2), Material::GRASS_GREEN);
-    level.0.insert((1,-2), Material::GRASS_GREEN);
-    level.0.insert((2, -2), Material::BRONZE);
-    level.0.insert((2, -1), Material::BRONZE);
-    level.0.insert((2, 0), Material::BRONZE);
-    level.0.insert((3, -2), Material::BRONZE);
-    level.0.insert((3, -1), Material::BRONZE);
-    level.0.insert((3, 0), Material::BRONZE);
-    level.0.insert((4, -2), Material::BRONZE);
-    level.0.insert((4, -1), Material::BRONZE);
-    level.0.insert((4, 0), Material::BRONZE);
+fn load_level(mut level: ResMut<Level>, mut commands: Commands, image_handles: Res<ImageHandles>) {
+    level.insert((0,0), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((-1,0), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((1,0), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((0,-1), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((-1, -1), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((1,-1), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((0,-2), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((-1, -2), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((1,-2), Material::GRASS_GREEN, &mut commands, &image_handles);
+    level.insert((2, -2), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((2, -1), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((2, 0), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((3, -2), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((3, -1), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((3, 0), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((4, -2), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((4, -1), Material::BRONZE, &mut commands, &image_handles);
+    level.insert((4, 0), Material::BRONZE, &mut commands, &image_handles);
 }
 
 fn setup_level(
     mut commands: Commands,
     image_handles: Res<ImageHandles>,
-    level_materials: ResMut<LevelMaterials>,
-    mut level_entities: ResMut<LevelEntities>,
+    mut level: ResMut<Level>,
 ) {
-    for (position, material) in &level_materials.0 {
+    for (position, material) in level.material_map.clone() {
         let world_position = Vec2::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8.);
-        if let block = material {
-            let row = level_materials.get_row(position.clone());
-            let column = level_materials.get_column(position.clone());
+            let row = level.get_row(position.clone());
+            let column = level.get_column(position.clone());
             let entity = commands.spawn((
                 SpriteBundle {
-                    texture: image_handles.0.get(&(block.clone(), row, column)).unwrap().clone(),
+                    texture: image_handles.0.get(&(material.clone(), row, column)).unwrap().clone(),
                     transform: Transform::from_translation(world_position.extend(0.)),
                     ..default()
                 },
                 Collider::cuboid(16. / 2., 16. / 2.),
                 Name::new("Textured Block"),
             ));
-            level_entities.0.insert(*position, entity.id());
-        }
+            level.entity_map.insert(position.clone(), entity.id());
     }
 }
 
-impl LevelMaterials {
-    pub fn insert(&mut self, position: (i32, i32), material: Material, mut commands: Commands, image_handles: ImageHandles) {
+impl Level {
+    pub fn insert(&mut self, position: (i32, i32), material: Material, commands: &mut Commands, image_handles: &ImageHandles) {
         let translation = Vec3::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8., 10.);
-        self.0.insert(position, material.clone());
-        if self.0.get(&position.clone()).is_none() {
+        self.material_map.insert(position, material.clone());
+        if self.entity_map.get(&position.clone()).is_none() {
             let row = self.get_row(position.clone());
             let column = self.get_column(position.clone());
             let entity = commands.spawn((
@@ -85,26 +81,27 @@ impl LevelMaterials {
                 Collider::cuboid(16. / 2., 16. / 2.),
                 Name::new("Textured Block"),
             ));
-            level_entities.0.insert(position.clone(), entity.id());
+            self.entity_map.insert(position.clone(), entity.id());
         }
     }
 
+    #[allow(unused_variables)]
     pub fn remove((x,y): (i32, i32)) {
 
     }
     pub fn get_row(&self, (x,y): (i32, i32)) -> Row {
-        if self.0.get(&(x,y)).is_none() {
+        if self.material_map.get(&(x,y)).is_none() {
             return Row::TOP
         }
-        let material = self.0.get(&(x,y)).unwrap();
-        let mut top = self.0.get(&(x, y + 1)).is_some();
+        let material = self.material_map.get(&(x,y)).unwrap();
+        let mut top = self.material_map.get(&(x, y + 1)).is_some();
         if top {
-            let top_material = *self.0.get(&(x, y + 1)).unwrap();
+            let top_material = *self.material_map.get(&(x, y + 1)).unwrap();
             top = &top_material == material;
         }
-        let mut bottom = self.0.get(&(x, y - 1)).is_some();
+        let mut bottom = self.material_map.get(&(x, y - 1)).is_some();
         if bottom {
-            let bottom_material = *self.0.get(&(x, y - 1)).unwrap();
+            let bottom_material = *self.material_map.get(&(x, y - 1)).unwrap();
             bottom = &bottom_material == material;
         }
         let row = match (top,bottom) {
@@ -124,18 +121,18 @@ impl LevelMaterials {
     }
 
     pub fn get_column(&self, (x,y): (i32, i32)) -> Column {
-        if self.0.get(&(x,y)).is_none() {
+        if self.material_map.get(&(x,y)).is_none() {
             return Column::LEFT
         }
-        let material = self.0.get(&(x,y)).unwrap();
-        let mut left = self.0.get(&(x - 1, y)).is_some();
+        let material = self.material_map.get(&(x,y)).unwrap();
+        let mut left = self.material_map.get(&(x - 1, y)).is_some();
         if left {
-            let left_material = *self.0.get(&(x - 1, y)).unwrap();
+            let left_material = *self.material_map.get(&(x - 1, y)).unwrap();
             left = &left_material == material;
         }
-        let mut right = self.0.get(&(x + 1, y)).is_some();
+        let mut right = self.material_map.get(&(x + 1, y)).is_some();
         if right {
-            let right_material = *self.0.get(&(x + 1, y)).unwrap();
+            let right_material = *self.material_map.get(&(x + 1, y)).unwrap();
             right = &right_material == material;
         }
         let column = match (left, right) {

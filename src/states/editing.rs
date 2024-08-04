@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use bevy::{prelude::*, sprite::Mesh2dHandle};
-use bevy_rapier2d::prelude::Collider;
 use super::AppState;
 use crate::input::PlayerInput;
 use crate::utilities::assets::{Column, Row};
@@ -10,7 +9,7 @@ use crate::{
     config::{LevelSettings, PlayerSettings},
     utilities::assets::{ColorResource, ImageHandles, Material},
 };
-use crate::level_management::{LevelEntities, LevelMaterials};
+use crate::level_management::Level;
 
 pub struct EditingPlugin;
 
@@ -57,8 +56,7 @@ fn move_block_to_cursor(
 
 fn place_block(
     input: Res<PlayerInput>,
-    mut level_materials: ResMut<LevelMaterials>,
-    mut level_entities: ResMut<LevelEntities>,
+    mut level: ResMut<Level>,
     query: Query<(&Transform, &Material), With<PlacingBlockMarker>>,
     mut commands: Commands,
     image_handles: Res<ImageHandles>,
@@ -70,39 +68,7 @@ fn place_block(
     let mut translation = transform.translation;
     translation.z = 0.;
     let position = ((translation.x as i32 - 8) / 16, (translation.y as i32 - 8) / 16);
-    let (x,y) = position;
-    level_materials.0.insert(position, material.clone());
-    if level_entities.0.get(&position.clone()).is_none() {
-        let row = level_materials.get_row(position.clone());
-        let column = level_materials.get_column(position.clone());
-        let entity = commands.spawn((
-            SpriteBundle {
-                texture: image_handles.0.get(&(material.clone(), row, column)).expect("Couldn't find image handle for material.").clone(),
-                transform: Transform::from_translation(translation),
-                ..default()
-            },
-            Collider::cuboid(16. / 2., 16. / 2.),
-            Name::new("Textured Block"),
-        ));
-        level_entities.0.insert(position.clone(), entity.id());
-    }
-    let neighbours = [(x,y+1), (x,y-1), (x+1, y), (x-1, y)];
-    neighbours.iter().for_each(|pos| {
-        let id = level_entities.0.get(pos);
-        if !id.is_none() {
-            let mut entity = commands.entity(*id.expect("Couldn't find ID."));
-            let row = level_materials.get_row(pos.clone());
-            let column = level_materials.get_column(pos.clone());
-            let material_option = level_materials.0.get(pos);
-            if material_option.is_none() {
-                entity.despawn();
-            } else {
-                let material = material_option.expect("No block at that position.").clone();
-                let texture = image_handles.0.get(&(material, row, column)).expect("Couldn't find image handle.").clone();
-                entity.insert(texture);
-            }
-        }
-    });
+    level.insert(position, material.clone(), &mut commands, &image_handles);
 }
 
 fn change_block_type(
@@ -138,7 +104,6 @@ fn enter_editing(
     ls: Res<LevelSettings>,
     materials: Res<ColorResource>,
     ps: Res<PlayerSettings>,
-    textures: Res<ImageHandles>,
     asset_server: Res<AssetServer>,
 ) {
     query.iter_mut().for_each(|mut movement_mode| {
@@ -163,28 +128,13 @@ fn enter_editing(
         },
         DeathLineMarker,
     ));
-    let block_handle = textures
-        .0
-        .get(&(Material::GRASS_GREEN, Row::TOP, Column::LEFT))
-        .unwrap()
-        .clone();
-    commands.spawn((
-        SpriteBundle {
-            texture: block_handle,
-            ..default()
-        },
-        Material::GRASS_GREEN,
-        PlacingBlockMarker,
-    ));
 }
 
 fn exit_editing(
     spawn_indicator: Query<Entity, With<SpawnIndicatorMarker>>,
     death_marker: Query<Entity, With<DeathLineMarker>>,
-    placing_block_marker: Query<Entity, With<PlacingBlockMarker>>,
     mut commands: Commands,
 ) {
     commands.entity(spawn_indicator.single()).despawn();
     commands.entity(death_marker.single()).despawn();
-    commands.entity(placing_block_marker.single()).despawn();
 }
