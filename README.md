@@ -7,14 +7,15 @@ My final project for my Matura Paper.
 - [x] Implement RapierRS
 - [x] Implement Basic Game Logic
 - [x] Implement Assets
-- [ ] Implement Level Editor
+- [x] Implement Level Editor
     - [x] Add Gamestate
     - [x] Add Input Based Camera Movement
     - [x] Add Lines To Help (Death line, spawn position)
     - [x] Add Block Following Cursor in Edit Mode
-    - [ ] Add Block Selection (right click to switch blocks)
-    - [ ] Implement Grid Snap Placement
-    - [ ] Implement Serde (Loading, Saving)
+    - [x] Add Block Selection (right click to switch blocks)
+    - [x] Implement Grid Snap Placement
+- [ ] Rework Level Resource (lots of functions to impl)
+- [ ] Implement Serde (Loading, Saving)
 - [ ] Add Timer and limited lives
 - [ ] Implement Settings Screen (to toggle features)
 - [ ] Implement Idle, Walk and Jump animations

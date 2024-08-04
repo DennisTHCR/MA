@@ -71,19 +71,21 @@ fn place_block(
     translation.z = 0.;
     let position = ((translation.x as i32 - 8) / 16, (translation.y as i32 - 8) / 16);
     let (x,y) = position;
-    level_materials.0.insert(position, Some(material.clone()));
-    let row = level_materials.get_row(position.clone());
-    let column = level_materials.get_column(position.clone());
-    let entity = commands.spawn((
-        SpriteBundle {
-            texture: image_handles.0.get(&(material.clone(), row, column)).expect("Couldn't find image handle for material.").clone(),
-            transform: Transform::from_translation(translation),
-            ..default()
-        },
-        Collider::cuboid(16. / 2., 16. / 2.),
-        Name::new("Textured Block"),
-    ));
-    level_entities.0.insert(position.clone(), entity.id());
+    level_materials.0.insert(position, material.clone());
+    if level_entities.0.get(&position.clone()).is_none() {
+        let row = level_materials.get_row(position.clone());
+        let column = level_materials.get_column(position.clone());
+        let entity = commands.spawn((
+            SpriteBundle {
+                texture: image_handles.0.get(&(material.clone(), row, column)).expect("Couldn't find image handle for material.").clone(),
+                transform: Transform::from_translation(translation),
+                ..default()
+            },
+            Collider::cuboid(16. / 2., 16. / 2.),
+            Name::new("Textured Block"),
+        ));
+        level_entities.0.insert(position.clone(), entity.id());
+    }
     let neighbours = [(x,y+1), (x,y-1), (x+1, y), (x-1, y)];
     neighbours.iter().for_each(|pos| {
         let id = level_entities.0.get(pos);
@@ -91,15 +93,16 @@ fn place_block(
             let mut entity = commands.entity(*id.expect("Couldn't find ID."));
             let row = level_materials.get_row(pos.clone());
             let column = level_materials.get_column(pos.clone());
-            let material = level_materials.0.get(pos).expect("No block at that position.").clone();
-            if material.is_none() {
-                entity.remove::<Handle<Image>>();
+            let material_option = level_materials.0.get(pos);
+            if material_option.is_none() {
+                entity.despawn();
             } else {
-                let texture = image_handles.0.get(&(material.expect("Couldn't find material."), row, column)).expect("Couldn't find image handle.").clone();
+                let material = material_option.expect("No block at that position.").clone();
+                let texture = image_handles.0.get(&(material, row, column)).expect("Couldn't find image handle.").clone();
                 entity.insert(texture);
             }
         }
-    })
+    });
 }
 
 fn change_block_type(
