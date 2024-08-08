@@ -1,15 +1,15 @@
 use std::path::Path;
 
-use bevy::{prelude::*, sprite::Mesh2dHandle};
 use super::AppState;
 use crate::input::PlayerInput;
+use crate::level_management::Level;
 use crate::utilities::assets::{Column, Row};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
     utilities::assets::{ColorResource, ImageHandles, Material},
 };
-use crate::level_management::Level;
+use bevy::{prelude::*, sprite::Mesh2dHandle};
 
 pub struct EditingPlugin;
 
@@ -19,7 +19,8 @@ impl Plugin for EditingPlugin {
             .add_systems(OnExit(AppState::Editing), exit_editing)
             .add_systems(
                 Update,
-                (move_block_to_cursor, change_block_type, place_block).run_if(in_state(AppState::Editing)),
+                (move_block_to_cursor, change_block_type, place_block)
+                    .run_if(in_state(AppState::Editing)),
             );
     }
 }
@@ -62,12 +63,15 @@ fn place_block(
     image_handles: Res<ImageHandles>,
 ) {
     if !input.left_clicked() {
-        return
+        return;
     }
     let (transform, material) = query.single();
     let mut translation = transform.translation;
     translation.z = 0.;
-    let position = ((translation.x as i32 - 8) / 16, (translation.y as i32 - 8) / 16);
+    let position = (
+        (translation.x as i32 - 8) / 16,
+        (translation.y as i32 - 8) / 16,
+    );
     level.insert(position, material.clone(), &mut commands, &image_handles);
 }
 

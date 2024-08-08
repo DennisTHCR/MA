@@ -12,7 +12,9 @@ impl Plugin for AssetPlugin {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
+#[derive(
+    Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
+)]
 pub enum Material {
     GRASS_GREEN,
     GRASS_ORANGE,
@@ -46,14 +48,18 @@ impl Default for ImageHandles {
     }
 }
 
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
+#[derive(
+    Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
+)]
 pub enum Row {
     TOP,
     CENTER,
     BOTTOM,
 }
 
-#[derive(Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug)]
+#[derive(
+    Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
+)]
 pub enum Column {
     LEFT,
     MIDDLE,
