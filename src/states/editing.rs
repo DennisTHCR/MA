@@ -21,7 +21,8 @@ impl Plugin for EditingPlugin {
                 Update,
                 (move_block_to_cursor, change_block_type, place_block)
                     .run_if(in_state(AppState::Editing)),
-            );
+            )
+            .insert_resource(HoveringBlock::default());
     }
 }
 
@@ -31,11 +32,34 @@ struct SpawnIndicatorMarker;
 #[derive(Component)]
 struct DeathLineMarker;
 
-#[derive(Component)]
-struct PlacingBlockMarker;
+#[derive(Resource)]
+struct HoveringBlock {
+    last_hovered: (i32, i32),
+    hovering: (i32, i32),
+    selected_material: Option<Material>,
+    original_material: Option<Material>,
+}
+
+impl Default for HoveringBlock {
+    fn default() -> Self {
+        HoveringBlock {
+            last_hovered: (0,0),
+            hovering: (0,0),
+            selected_material: None,
+            original_material: None,
+        }
+    }
+}
+
+impl HoveringBlock {
+    fn new_cursor_position(&mut self, (x,y): (i32,i32)) {
+        if self.hovering != (x,y) {
+            self.hovering = (x,y);
+        }
+    }
+}
 
 fn move_block_to_cursor(
-    mut block_transform: Query<&mut Transform, With<PlacingBlockMarker>>,
     camera_query: Query<(&Camera, &GlobalTransform)>,
     windows: Query<&Window>,
 ) {
@@ -50,28 +74,22 @@ fn move_block_to_cursor(
 
     let x = point.x - ((point.x % 16.) + 16.) % 16. + 8.;
     let y = point.y - ((point.y % 16.) + 16.) % 16. + 8.;
-    let grid_point = Vec2::new(x, y);
-
-    block_transform.single_mut().translation = grid_point.extend(10.);
+    let grid_point = (x, y);
+    
 }
 
 fn place_block(
     input: Res<PlayerInput>,
     mut level: ResMut<Level>,
-    query: Query<(&Transform, &Material), With<PlacingBlockMarker>>,
     mut commands: Commands,
     image_handles: Res<ImageHandles>,
+    hovering_block: Res<HoveringBlock>,
 ) {
     if !input.left_clicked() {
         return;
     }
-    let (transform, material) = query.single();
-    let mut translation = transform.translation;
-    translation.z = 0.;
-    let position = (
-        (translation.x as i32 - 8) / 16,
-        (translation.y as i32 - 8) / 16,
-    );
+    let position = hovering_block.hovering;
+    let material = hovering_block.selected_material;
     level.insert(position, material.clone(), &mut commands, &image_handles);
 }
 
