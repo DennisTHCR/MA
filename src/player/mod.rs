@@ -1,6 +1,8 @@
+mod animation;
 mod movement;
 
 use crate::camera::movement::follow::{Target, TargetMarker};
+use animation::PlayerAnimationPlugin;
 use bevy::prelude::*;
 use movement::PlayerMovementPlugin;
 
@@ -8,7 +10,8 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(PlayerMovementPlugin);
+        app.add_plugins(PlayerMovementPlugin)
+            .add_plugins(PlayerAnimationPlugin);
     }
 }
 

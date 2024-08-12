@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{Collider, LockedAxes, RigidBody};
 use bevy_tnua::prelude::TnuaControllerBundle;
@@ -12,6 +10,7 @@ use crate::{
     },
     config::{LevelSettings, PlayerSettings},
     player::{PlayerBundle, PlayerMarker},
+    utilities::assets::{PlayerAnimationMap, PlayerAnimationState},
 };
 
 use super::AppState;
@@ -39,14 +38,19 @@ fn exit_playing(
 fn enter_playing(
     mut commands: Commands,
     cameras: Query<Entity, With<CameraMarker>>,
-    asset_server: Res<AssetServer>,
     ls: Res<LevelSettings>,
     ps: Res<PlayerSettings>,
+    player_animation_map: Res<PlayerAnimationMap>,
 ) {
-    let handle = asset_server.load(Path::new("CHARACTER.png"));
+    let texture = player_animation_map
+        .0
+        .get(&PlayerAnimationState::IDLE)
+        .unwrap()
+        .texture
+        .clone();
     commands.spawn((
         SpriteBundle {
-            texture: handle,
+            texture,
             transform: ls.spawn_location,
             ..default()
         },
@@ -54,6 +58,15 @@ fn enter_playing(
             // Hack because Name doesn't implement clone and copy
             name: ps.player_bundle.name.clone(),
             ..ps.player_bundle
+        },
+        TextureAtlas {
+            layout: player_animation_map
+                .0
+                .get(&PlayerAnimationState::IDLE)
+                .unwrap()
+                .texture_atlas_layout
+                .clone(),
+            index: 1,
         },
         RigidBody::Dynamic,
         TnuaRapier2dIOBundle::default(),

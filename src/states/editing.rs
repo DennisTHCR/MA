@@ -3,11 +3,10 @@ use std::path::Path;
 use super::AppState;
 use crate::input::PlayerInput;
 use crate::level_management::Level;
-use crate::utilities::assets::{Column, Row};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
-    utilities::assets::{ColorResource, ImageHandles, Material},
+    utilities::assets::{ColorResource, Material},
 };
 use bevy::{prelude::*, sprite::Mesh2dHandle};
 
@@ -43,8 +42,8 @@ struct HoveringBlock {
 impl Default for HoveringBlock {
     fn default() -> Self {
         HoveringBlock {
-            last_hovered: (0,0),
-            hovering: (0,0),
+            last_hovered: (0, 0),
+            hovering: (0, 0),
             selected_material: None,
             original_material: None,
         }
@@ -52,9 +51,9 @@ impl Default for HoveringBlock {
 }
 
 impl HoveringBlock {
-    fn new_cursor_position(&mut self, (x,y): (i32,i32)) {
-        if self.hovering != (x,y) {
-            self.hovering = (x,y);
+    fn new_cursor_position(&mut self, (x, y): (i32, i32)) {
+        if self.hovering != (x, y) {
+            self.hovering = (x, y);
         }
     }
 }
@@ -62,6 +61,8 @@ impl HoveringBlock {
 fn move_block_to_cursor(
     camera_query: Query<(&Camera, &GlobalTransform)>,
     windows: Query<&Window>,
+    mut hovering_block: ResMut<HoveringBlock>,
+    mut level: ResMut<Level>,
 ) {
     let (camera, camera_transform) = camera_query.single();
     let Some(cursor_position) = windows.single().cursor_position() else {
@@ -72,50 +73,57 @@ fn move_block_to_cursor(
         return;
     };
 
-    let x = point.x - ((point.x % 16.) + 16.) % 16. + 8.;
-    let y = point.y - ((point.y % 16.) + 16.) % 16. + 8.;
+    let x = (point.x as f32 / 16.0).floor() as i32;
+    let y = (point.y as f32 / 16.0).floor() as i32;
+
     let grid_point = (x, y);
-    
+    hovering_block.new_cursor_position(grid_point);
+    if hovering_block.hovering != hovering_block.last_hovered {
+        level.insert(
+            hovering_block.last_hovered,
+            hovering_block.original_material,
+        );
+        let hovering_material = level.material_map.get(&grid_point);
+        hovering_block.original_material = if hovering_material.is_some() {
+            Some(*hovering_material.unwrap())
+        } else {
+            None
+        };
+        hovering_block.last_hovered = hovering_block.hovering;
+    }
+    level.insert(hovering_block.hovering, hovering_block.selected_material);
 }
 
 fn place_block(
     input: Res<PlayerInput>,
     mut level: ResMut<Level>,
-    mut commands: Commands,
-    image_handles: Res<ImageHandles>,
-    hovering_block: Res<HoveringBlock>,
+    mut hovering_block: ResMut<HoveringBlock>,
 ) {
     if !input.left_clicked() {
         return;
     }
     let position = hovering_block.hovering;
-    let material = hovering_block.selected_material;
-    level.insert(position, material.clone(), &mut commands, &image_handles);
+    if hovering_block.selected_material.is_some() {
+        let material = hovering_block.selected_material.unwrap();
+        level.insert(position, Some(material.clone()));
+    }
+    hovering_block.original_material = hovering_block.selected_material;
 }
 
-fn change_block_type(
-    mut query: Query<(&mut Handle<Image>, &mut Material), With<PlacingBlockMarker>>,
-    input: Res<PlayerInput>,
-    textures: Res<ImageHandles>,
-) {
+fn change_block_type(mut hovering_block: ResMut<HoveringBlock>, input: Res<PlayerInput>) {
     if input.right_clicked() {
-        query.iter_mut().for_each(|(mut image, mut material)| {
-            *material = match *material {
-                Material::GRASS_GREEN => Material::GRASS_ORANGE,
-                Material::GRASS_ORANGE => Material::GRASS_PINK,
-                Material::GRASS_PINK => Material::WOOD,
-                Material::WOOD => Material::STEEL,
-                Material::STEEL => Material::BRONZE,
-                Material::BRONZE => Material::BRICK,
-                Material::BRICK => Material::GOLD,
-                Material::GOLD => Material::GRASS_GREEN,
-            };
-            *image = textures
-                .0
-                .get(&(*material, Row::TOP, Column::LEFT))
-                .unwrap()
-                .clone();
-        })
+        let material = &mut hovering_block.selected_material;
+        *material = match *material {
+            Some(Material::GRASS_GREEN) => Some(Material::GRASS_ORANGE),
+            Some(Material::GRASS_ORANGE) => Some(Material::GRASS_PINK),
+            Some(Material::GRASS_PINK) => Some(Material::WOOD),
+            Some(Material::WOOD) => Some(Material::STEEL),
+            Some(Material::STEEL) => Some(Material::BRONZE),
+            Some(Material::BRONZE) => Some(Material::BRICK),
+            Some(Material::BRICK) => Some(Material::GOLD),
+            Some(Material::GOLD) => None,
+            None => Some(Material::GRASS_GREEN),
+        };
     }
 }
 
