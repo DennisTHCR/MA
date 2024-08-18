@@ -3,6 +3,7 @@ use crate::utilities::assets::{init, Column, ImageHandles, Row};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_rapier2d::geometry::Collider;
+use crate::states::editing::HoveringBlock;
 
 pub struct LevelManagementPlugin;
 
@@ -15,7 +16,7 @@ impl Plugin for LevelManagementPlugin {
             level_despawn_queue: HashSet::new(),
             texture_update_queue: HashSet::new(),
         })
-        .add_systems(Startup, (load_level, setup_level).chain().after(init))
+        .add_systems(Startup, load_level.after(init))
         .add_systems(Update, execute_level_queues);
     }
 }
@@ -29,7 +30,7 @@ pub struct Level {
     pub texture_update_queue: HashSet<(i32, i32)>,
 }
 
-fn load_level(mut level: ResMut<Level>) {
+fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock>) {
     level.insert((0, 0), Some(Material::GRASS_GREEN));
     level.insert((-1, 0), Some(Material::GRASS_GREEN));
     level.insert((1, 0), Some(Material::GRASS_GREEN));
@@ -48,28 +49,10 @@ fn load_level(mut level: ResMut<Level>) {
     level.insert((4, -2), Some(Material::BRONZE));
     level.insert((4, -1), Some(Material::BRONZE));
     level.insert((4, 0), Some(Material::BRONZE));
-}
-
-fn setup_level(mut commands: Commands, image_handles: Res<ImageHandles>, mut level: ResMut<Level>) {
-    for (position, material) in level.material_map.clone() {
-        let world_position = Vec2::new(position.0 as f32 * 16. + 8., position.1 as f32 * 16. + 8.);
-        let row = level.get_row(position.clone());
-        let column = level.get_column(position.clone());
-        let entity = commands.spawn((
-            SpriteBundle {
-                texture: image_handles
-                    .0
-                    .get(&(material.clone(), row, column))
-                    .unwrap()
-                    .clone(),
-                transform: Transform::from_translation(world_position.extend(0.)),
-                ..default()
-            },
-            Collider::cuboid(16. / 2., 16. / 2.),
-            Name::new("Textured Block"),
-        ));
-        level.entity_map.insert(position.clone(), entity.id());
-    }
+    hovering_block.original_material = match level.material_map.get(&hovering_block.last_hovered) {
+        Some(material) => Some(*material),
+        None => None,
+    };
 }
 
 fn execute_level_queues(

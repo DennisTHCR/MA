@@ -32,11 +32,11 @@ struct SpawnIndicatorMarker;
 struct DeathLineMarker;
 
 #[derive(Resource)]
-struct HoveringBlock {
-    last_hovered: (i32, i32),
-    hovering: (i32, i32),
-    selected_material: Option<Material>,
-    original_material: Option<Material>,
+pub struct HoveringBlock {
+    pub last_hovered: (i32, i32),
+    pub hovering: (i32, i32),
+    pub selected_material: Option<Material>,
+    pub original_material: Option<Material>,
 }
 
 impl Default for HoveringBlock {

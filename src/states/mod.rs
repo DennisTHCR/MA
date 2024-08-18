@@ -1,4 +1,4 @@
-mod editing;
+pub mod editing;
 mod playing;
 
 use bevy::prelude::*;
