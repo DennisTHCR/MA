@@ -1,9 +1,11 @@
+use crate::states::editing::HoveringBlock;
 use crate::utilities::assets::Material;
 use crate::utilities::assets::{init, Column, ImageHandles, Row};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_rapier2d::geometry::Collider;
-use crate::states::editing::HoveringBlock;
+use serde::{Deserialize, Serialize};
+use std::fs::{read_to_string, write};
 
 pub struct LevelManagementPlugin;
 
@@ -17,11 +19,11 @@ impl Plugin for LevelManagementPlugin {
             texture_update_queue: HashSet::new(),
         })
         .add_systems(Startup, load_level.after(init))
-        .add_systems(Update, execute_level_queues);
+        .add_systems(Update, (execute_level_queues, save_level));
     }
 }
 
-#[derive(Resource)]
+#[derive(Resource, Serialize, Deserialize, Debug)]
 pub struct Level {
     pub material_map: HashMap<(i32, i32), Material>,
     pub entity_map: HashMap<(i32, i32), Entity>,
@@ -31,24 +33,13 @@ pub struct Level {
 }
 
 fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock>) {
-    level.insert((0, 0), Some(Material::GRASS_GREEN));
-    level.insert((-1, 0), Some(Material::GRASS_GREEN));
-    level.insert((1, 0), Some(Material::GRASS_GREEN));
-    level.insert((0, -1), Some(Material::GRASS_GREEN));
-    level.insert((-1, -1), Some(Material::GRASS_GREEN));
-    level.insert((1, -1), Some(Material::GRASS_GREEN));
-    level.insert((0, -2), Some(Material::GRASS_GREEN));
-    level.insert((-1, -2), Some(Material::GRASS_GREEN));
-    level.insert((1, -2), Some(Material::GRASS_GREEN));
-    level.insert((2, -2), Some(Material::BRONZE));
-    level.insert((2, -1), Some(Material::BRONZE));
-    level.insert((2, 0), Some(Material::BRONZE));
-    level.insert((3, -2), Some(Material::BRONZE));
-    level.insert((3, -1), Some(Material::BRONZE));
-    level.insert((3, 0), Some(Material::BRONZE));
-    level.insert((4, -2), Some(Material::BRONZE));
-    level.insert((4, -1), Some(Material::BRONZE));
-    level.insert((4, 0), Some(Material::BRONZE));
+    let json = read_to_string("assets/level.json");
+    if !json.is_err() {
+        let deserialized_option = serde_json::from_str(&json.unwrap());
+        if !deserialized_option.is_err() {
+            *level = deserialized_option.unwrap();
+        }
+    }
     hovering_block.original_material = match level.material_map.get(&hovering_block.last_hovered) {
         Some(material) => Some(*material),
         None => None,
@@ -102,7 +93,6 @@ pub fn execute_level_queues(
             }
             level.level_spawn_queue.remove(&position);
         });
-
     level
         .texture_update_queue
         .clone()
@@ -124,6 +114,13 @@ pub fn execute_level_queues(
             }
             level.texture_update_queue.remove(&position);
         });
+}
+
+fn save_level(level: Res<Level>) {
+    let serialized = serde_json::to_string(&*level).unwrap_or_default();
+    if let Err(e) = write("assets/level.json", serialized) {
+        eprintln!("Failed to save level: {}", e);
+    }
 }
 
 impl Level {

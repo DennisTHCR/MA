@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path};
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
@@ -16,7 +17,19 @@ impl Plugin for AssetPlugin {
 
 #[allow(non_camel_case_types)]
 #[derive(
-    Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
+    Component,
+    Hash,
+    Ord,
+    PartialOrd,
+    PartialEq,
+    Eq,
+    Copy,
+    Clone,
+    EnumIter,
+    AsRefStr,
+    Debug,
+    Serialize,
+    Deserialize,
 )]
 pub enum Material {
     GRASS_GREEN,
