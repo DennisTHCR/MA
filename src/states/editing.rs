@@ -2,16 +2,16 @@ use std::path::Path;
 
 use super::AppState;
 use crate::input::PlayerInput;
-use crate::level_management::{Level,execute_level_queues};
+use crate::level_management::{execute_level_queues, Level};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
     utilities::assets::{ColorResource, Material},
 };
 use bevy::{prelude::*, sprite::Mesh2dHandle};
-use std::fs::write;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fs::write;
 
 pub struct EditingPlugin;
 
@@ -21,7 +21,8 @@ impl Plugin for EditingPlugin {
             .add_systems(OnExit(AppState::Editing), exit_editing)
             .add_systems(
                 Update,
-                (move_block_to_cursor, change_block_type, place_block).before(execute_level_queues)
+                (move_block_to_cursor, change_block_type, place_block)
+                    .before(execute_level_queues)
                     .run_if(in_state(AppState::Editing)),
             )
             .insert_resource(HoveringBlock::default());
@@ -53,7 +54,6 @@ impl Default for HoveringBlock {
     }
 }
 
-
 fn move_block_to_cursor(
     camera_query: Query<(&Camera, &GlobalTransform)>,
     windows: Query<&Window>,
@@ -73,26 +73,25 @@ fn move_block_to_cursor(
     let y = (point.y as f32 / 16.0).floor() as i32;
 
     let grid_point = (x, y);
-    
+
     // Check if the cursor has moved to a new block.
     if grid_point != hovering_block.hovering {
         // Restore the original material of the last hovered block.
         level.insert(hovering_block.hovering, hovering_block.original_material);
-        
+
         // Update the `last_hovered` to the new hovered block.
         hovering_block.last_hovered = hovering_block.hovering;
-        
+
         // Update the `hovering` position to the new block.
         hovering_block.hovering = grid_point;
-        
+
         // Fetch and store the original material of the new block.
         hovering_block.original_material = level.material_map.get(&grid_point).copied();
-        
+
         // Temporarily set the new hovered block's material to the selected material (which could be `None`).
         level.insert(grid_point, hovering_block.selected_material);
     }
 }
-
 
 fn place_block(
     input: Res<PlayerInput>,
@@ -110,7 +109,11 @@ fn place_block(
     hovering_block.original_material = hovering_block.selected_material;
 }
 
-fn change_block_type(mut hovering_block: ResMut<HoveringBlock>, input: Res<PlayerInput>, mut level: ResMut<Level>) {
+fn change_block_type(
+    mut hovering_block: ResMut<HoveringBlock>,
+    input: Res<PlayerInput>,
+    mut level: ResMut<Level>,
+) {
     if input.right_clicked() {
         let material = &mut hovering_block.selected_material;
         *material = match *material {
@@ -180,9 +183,7 @@ mod tuple_map {
         string_map.serialize(serializer)
     }
 
-    pub fn deserialize<'de, D>(
-        deserializer: D,
-    ) -> Result<HashMap<(i32, i32), Material>, D::Error>
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<HashMap<(i32, i32), Material>, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -208,8 +209,8 @@ mod tuple_map {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SerdeMapContainer {
-    #[serde(with="tuple_map")]
-    pub map: HashMap<(i32,i32), Material>
+    #[serde(with = "tuple_map")]
+    pub map: HashMap<(i32, i32), Material>,
 }
 
 fn exit_editing(
@@ -223,11 +224,14 @@ fn exit_editing(
     commands.entity(death_marker.single()).despawn();
     level.insert(hovering_block.hovering, hovering_block.original_material);
     let container = SerdeMapContainer {
-        map: level.material_map.clone()
+        map: level.material_map.clone(),
     };
     let serialized = match serde_json::to_string(&container) {
         Ok(data) => data,
-        Err(e) => {eprint!("{e}"); String::new()},
+        Err(e) => {
+            eprint!("{e}");
+            String::new()
+        }
     };
     println!("{serialized}");
     if let Err(e) = write("assets/level.json", serialized) {

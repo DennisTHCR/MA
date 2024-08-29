@@ -3,7 +3,7 @@ mod playing;
 
 use bevy::prelude::*;
 
-use crate::input::{PlayerInput, handle_input};
+use crate::input::{handle_input, PlayerInput};
 
 use editing::EditingPlugin;
 use playing::PlayingPlugin;

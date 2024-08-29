@@ -2,8 +2,8 @@ use crate::states::editing::{HoveringBlock, SerdeMapContainer};
 use crate::utilities::assets::Material;
 use crate::utilities::assets::{init, Column, ImageHandles, Row};
 use bevy::prelude::*;
-use std::collections::{HashMap, HashSet};
 use bevy_rapier2d::geometry::Collider;
+use std::collections::{HashMap, HashSet};
 use std::fs::read_to_string;
 
 pub struct LevelManagementPlugin;
