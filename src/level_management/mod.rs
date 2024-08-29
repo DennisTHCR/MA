@@ -55,7 +55,7 @@ fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock
     };
 }
 
-fn execute_level_queues(
+pub fn execute_level_queues(
     mut commands: Commands,
     mut level: ResMut<Level>,
     image_handles: Res<ImageHandles>,

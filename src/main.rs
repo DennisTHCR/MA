@@ -8,7 +8,6 @@ mod states;
 mod utilities;
 
 use bevy::prelude::*;
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rapier2d::prelude::*;
 use camera::CameraPlugin;
@@ -27,7 +26,6 @@ fn main() {
             ConfigPlugin,
             CameraPlugin,
             UtilitiesPlugin,
-            WorldInspectorPlugin::new(),
             InputPlugin,
             LevelManagementPlugin,
             PlayerPlugin,

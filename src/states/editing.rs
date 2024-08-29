@@ -2,7 +2,7 @@ use std::path::Path;
 
 use super::AppState;
 use crate::input::PlayerInput;
-use crate::level_management::Level;
+use crate::level_management::{Level,execute_level_queues};
 use crate::{
     camera::{movement::MovementMode, CameraMarker},
     config::{LevelSettings, PlayerSettings},
@@ -18,7 +18,7 @@ impl Plugin for EditingPlugin {
             .add_systems(OnExit(AppState::Editing), exit_editing)
             .add_systems(
                 Update,
-                (move_block_to_cursor, change_block_type, place_block)
+                (move_block_to_cursor, change_block_type, place_block).before(execute_level_queues)
                     .run_if(in_state(AppState::Editing)),
             )
             .insert_resource(HoveringBlock::default());
@@ -44,19 +44,12 @@ impl Default for HoveringBlock {
         HoveringBlock {
             last_hovered: (0, 0),
             hovering: (0, 0),
-            selected_material: None,
+            selected_material: Some(Material::GRASS_GREEN),
             original_material: None,
         }
     }
 }
 
-impl HoveringBlock {
-    fn new_cursor_position(&mut self, (x, y): (i32, i32)) {
-        if self.hovering != (x, y) {
-            self.hovering = (x, y);
-        }
-    }
-}
 
 fn move_block_to_cursor(
     camera_query: Query<(&Camera, &GlobalTransform)>,
@@ -77,22 +70,26 @@ fn move_block_to_cursor(
     let y = (point.y as f32 / 16.0).floor() as i32;
 
     let grid_point = (x, y);
-    hovering_block.new_cursor_position(grid_point);
-    if hovering_block.hovering != hovering_block.last_hovered {
-        level.insert(
-            hovering_block.last_hovered,
-            hovering_block.original_material,
-        );
-        let hovering_material = level.material_map.get(&grid_point);
-        hovering_block.original_material = if hovering_material.is_some() {
-            Some(*hovering_material.unwrap())
-        } else {
-            None
-        };
+    
+    // Check if the cursor has moved to a new block.
+    if grid_point != hovering_block.hovering {
+        // Restore the original material of the last hovered block.
+        level.insert(hovering_block.hovering, hovering_block.original_material);
+        
+        // Update the `last_hovered` to the new hovered block.
         hovering_block.last_hovered = hovering_block.hovering;
+        
+        // Update the `hovering` position to the new block.
+        hovering_block.hovering = grid_point;
+        
+        // Fetch and store the original material of the new block.
+        hovering_block.original_material = level.material_map.get(&grid_point).copied();
+        
+        // Temporarily set the new hovered block's material to the selected material (which could be `None`).
+        level.insert(grid_point, hovering_block.selected_material);
     }
-    level.insert(hovering_block.hovering, hovering_block.selected_material);
 }
+
 
 fn place_block(
     input: Res<PlayerInput>,
@@ -110,7 +107,7 @@ fn place_block(
     hovering_block.original_material = hovering_block.selected_material;
 }
 
-fn change_block_type(mut hovering_block: ResMut<HoveringBlock>, input: Res<PlayerInput>) {
+fn change_block_type(mut hovering_block: ResMut<HoveringBlock>, input: Res<PlayerInput>, mut level: ResMut<Level>) {
     if input.right_clicked() {
         let material = &mut hovering_block.selected_material;
         *material = match *material {
@@ -124,6 +121,7 @@ fn change_block_type(mut hovering_block: ResMut<HoveringBlock>, input: Res<Playe
             Some(Material::GOLD) => None,
             None => Some(Material::GRASS_GREEN),
         };
+        level.insert(hovering_block.hovering, hovering_block.selected_material);
     }
 }
 
@@ -164,7 +162,10 @@ fn exit_editing(
     spawn_indicator: Query<Entity, With<SpawnIndicatorMarker>>,
     death_marker: Query<Entity, With<DeathLineMarker>>,
     mut commands: Commands,
+    hovering_block: Res<HoveringBlock>,
+    mut level: ResMut<Level>,
 ) {
     commands.entity(spawn_indicator.single()).despawn();
     commands.entity(death_marker.single()).despawn();
+    level.insert(hovering_block.hovering, hovering_block.original_material);
 }

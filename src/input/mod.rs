@@ -9,7 +9,7 @@ impl Plugin for InputPlugin {
     }
 }
 
-fn handle_input(
+pub fn handle_input(
     kb: Res<ButtonInput<KeyCode>>,
     mouse: Res<ButtonInput<MouseButton>>,
     mut player_input: ResMut<PlayerInput>,
