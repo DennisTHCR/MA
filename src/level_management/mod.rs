@@ -1,11 +1,10 @@
-use crate::states::editing::HoveringBlock;
+use crate::states::editing::{HoveringBlock, SerdeMapContainer};
 use crate::utilities::assets::Material;
 use crate::utilities::assets::{init, Column, ImageHandles, Row};
 use bevy::prelude::*;
-use bevy::utils::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use bevy_rapier2d::geometry::Collider;
-use serde::{Deserialize, Serialize};
-use std::fs::{read_to_string, write};
+use std::fs::read_to_string;
 
 pub struct LevelManagementPlugin;
 
@@ -19,11 +18,11 @@ impl Plugin for LevelManagementPlugin {
             texture_update_queue: HashSet::new(),
         })
         .add_systems(Startup, load_level.after(init))
-        .add_systems(Update, (execute_level_queues, save_level));
+        .add_systems(Update, execute_level_queues);
     }
 }
 
-#[derive(Resource, Serialize, Deserialize, Debug)]
+#[derive(Resource, Debug)]
 pub struct Level {
     pub material_map: HashMap<(i32, i32), Material>,
     pub entity_map: HashMap<(i32, i32), Entity>,
@@ -37,13 +36,17 @@ fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock
     if !json.is_err() {
         let deserialized_option = serde_json::from_str(&json.unwrap());
         if !deserialized_option.is_err() {
-            *level = deserialized_option.unwrap();
+            let container: SerdeMapContainer = deserialized_option.unwrap();
+            level.material_map = container.map;
         }
     }
     hovering_block.original_material = match level.material_map.get(&hovering_block.last_hovered) {
         Some(material) => Some(*material),
         None => None,
     };
+    for (pos, material) in level.material_map.clone() {
+        level.insert(pos, Some(material));
+    }
 }
 
 pub fn execute_level_queues(
@@ -114,13 +117,6 @@ pub fn execute_level_queues(
             }
             level.texture_update_queue.remove(&position);
         });
-}
-
-fn save_level(level: Res<Level>) {
-    let serialized = serde_json::to_string(&*level).unwrap_or_default();
-    if let Err(e) = write("assets/level.json", serialized) {
-        eprintln!("Failed to save level: {}", e);
-    }
 }
 
 impl Level {

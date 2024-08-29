@@ -9,6 +9,9 @@ use crate::{
     utilities::assets::{ColorResource, Material},
 };
 use bevy::{prelude::*, sprite::Mesh2dHandle};
+use std::fs::write;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 pub struct EditingPlugin;
 
@@ -158,6 +161,57 @@ fn enter_editing(
     ));
 }
 
+mod tuple_map {
+    use super::*;
+    use serde::{Deserializer, Serializer};
+    use std::collections::HashMap;
+
+    pub fn serialize<S>(
+        map: &HashMap<(i32, i32), Material>,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let string_map: HashMap<String, &Material> = map
+            .iter()
+            .map(|(k, v)| (format!("{},{}", k.0, k.1), v))
+            .collect();
+        string_map.serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D>(
+        deserializer: D,
+    ) -> Result<HashMap<(i32, i32), Material>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let string_map: HashMap<String, Material> = HashMap::deserialize(deserializer)?;
+        let map = string_map
+            .into_iter()
+            .map(|(k, v)| {
+                let mut split = k.split(',');
+                let x = split
+                    .next()
+                    .and_then(|x| x.parse::<i32>().ok())
+                    .ok_or_else(|| serde::de::Error::custom("Invalid key format"))?;
+                let y = split
+                    .next()
+                    .and_then(|y| y.parse::<i32>().ok())
+                    .ok_or_else(|| serde::de::Error::custom("Invalid key format"))?;
+                Ok(((x, y), v))
+            })
+            .collect::<Result<HashMap<(i32, i32), Material>, _>>()?;
+        Ok(map)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SerdeMapContainer {
+    #[serde(with="tuple_map")]
+    pub map: HashMap<(i32,i32), Material>
+}
+
 fn exit_editing(
     spawn_indicator: Query<Entity, With<SpawnIndicatorMarker>>,
     death_marker: Query<Entity, With<DeathLineMarker>>,
@@ -168,4 +222,17 @@ fn exit_editing(
     commands.entity(spawn_indicator.single()).despawn();
     commands.entity(death_marker.single()).despawn();
     level.insert(hovering_block.hovering, hovering_block.original_material);
+    let container = SerdeMapContainer {
+        map: level.material_map.clone()
+    };
+    let serialized = match serde_json::to_string(&container) {
+        Ok(data) => data,
+        Err(e) => {eprint!("{e}"); String::new()},
+    };
+    println!("{serialized}");
+    if let Err(e) = write("assets/level.json", serialized) {
+        eprintln!("Failed to save level: {}", e);
+    } else {
+        println!("Successfully saved!")
+    }
 }
