@@ -19,4 +19,4 @@ My final project for my Matura Paper.
 - [ ] Add Timer and limited lives
 - [ ] Implement Settings Screen (to toggle features)
 - [x] Implement Idle, Walk and Jump animations
-- [ ] Change cuboid collider to capsule collider
+- [x] Change cuboid collider to capsule collider

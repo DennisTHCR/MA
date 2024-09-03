@@ -72,11 +72,8 @@ fn enter_playing(
         TnuaRapier2dIOBundle::default(),
         TnuaControllerBundle::default(),
         LockedAxes::ROTATION_LOCKED,
-        TnuaRapier2dSensorShape(Collider::cuboid(
-            ps.sensor_collider_size.x,
-            ps.sensor_collider_size.y,
-        )),
-        Collider::cuboid(ps.collider_size.x, ps.collider_size.y),
+        TnuaRapier2dSensorShape(Collider::capsule(Vec2::new(0., -ps.sensor_collider_size.y / 2. - 2.), Vec2::new(0., ps.sensor_collider_size.y / 2. - 2.), ps.sensor_collider_size.x / 2.)),
+        Collider::capsule(Vec2::new(0., -ps.collider_size.y / 2. - 2.), Vec2::new(0., ps.collider_size.y / 2. - 2.), ps.collider_size.x / 2.),
     ));
     cameras.iter().for_each(|entity| {
         commands
