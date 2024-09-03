@@ -16,7 +16,10 @@ My final project for my Matura Paper.
     - [x] Implement Grid Snap Placement
 - [x] Rework Level Resource (lots of functions to impl)
 - [x] Implement Serde (Loading, Saving)
-- [ ] Add Timer and limited lives
-- [ ] Implement Settings Screen (to toggle features)
 - [x] Implement Idle, Walk and Jump animations
 - [x] Change cuboid collider to capsule collider
+- [ ] Add Timer and limited lives
+- [ ] Add Control Display
+- [ ] Add Material Selection Display / Better Picker
+- [ ] Add Spawn and Goal Marking Block
+- [ ] Add Little Comments
