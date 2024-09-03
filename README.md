@@ -14,9 +14,9 @@ My final project for my Matura Paper.
     - [x] Add Block Following Cursor in Edit Mode
     - [x] Add Block Selection (right click to switch blocks)
     - [x] Implement Grid Snap Placement
-- [ ] Rework Level Resource (lots of functions to impl)
-- [ ] Implement Serde (Loading, Saving)
+- [x] Rework Level Resource (lots of functions to impl)
+- [x] Implement Serde (Loading, Saving)
 - [ ] Add Timer and limited lives
 - [ ] Implement Settings Screen (to toggle features)
-- [ ] Implement Idle, Walk and Jump animations
-- [ ] Implement zoom out / in depending on Player speed
+- [x] Implement Idle, Walk and Jump animations
+- [ ] Change cuboid collider to capsule collider
