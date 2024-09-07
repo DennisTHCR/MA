@@ -12,7 +12,7 @@ impl FollowMarker {
     }
 }
 
-/// Component to mark the entity to follow. i32 is used as ID to link for following entities
+/// Component to mark the entity to follow. [Target] enum is used as ID to link for following entities
 #[derive(Component, Clone, Copy)]
 pub struct TargetMarker(Target);
 
