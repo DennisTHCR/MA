@@ -3,6 +3,7 @@ use bevy_rapier2d::dynamics::Velocity;
 
 use crate::{config::LevelSettings, player::PlayerMarker, states::AppState};
 
+/// The Plugin containing all game logic
 pub struct GameLogicPlugin;
 
 impl Plugin for GameLogicPlugin {
@@ -14,6 +15,7 @@ impl Plugin for GameLogicPlugin {
     }
 }
 
+/// A System that kills the player if he falls
 fn check_player_position(
     ls: Res<LevelSettings>,
     mut query: Query<(&mut Transform, &mut Velocity), With<PlayerMarker>>,

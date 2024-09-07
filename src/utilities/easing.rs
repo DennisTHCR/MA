@@ -12,7 +12,7 @@ impl Plugin for EasingPlugin {
     }
 }
 
-/// The Ease struct is used to get more natural values for e.g. animations.
+/// The Ease struct is used to get more natural values for movements
 #[derive(Reflect)]
 pub struct EaseStruct {
     current_step: u16,
@@ -23,6 +23,7 @@ pub struct EaseStruct {
     easing_type: EasingType,
 }
 
+/// Ticks all [TimeEase] timers
 fn update_time_ease(mut time_eases: Query<&mut TimeEase>, time: Res<Time>) {
     time_eases.iter_mut().for_each(|mut ease| {
         if ease.is_done() {
@@ -67,28 +68,34 @@ impl TimeEase {
         ))
     }
 
+    /// Forces a zoom value
     #[allow(dead_code)]
     pub fn force_zoom(&mut self, goal_zoom: f32) {
         self.0.force_done();
         self.0.set_end_val(goal_zoom);
     }
 
+    /// Gets the value the ease is approaching
     pub fn get_end_val(&self) -> f32 {
         self.0.get_end_val()
     }
 
+    /// Gets the current eased value
     pub fn get_current_value(&self) -> f32 {
         self.0.get_current_value()
     }
 
+    /// Skips a step
     pub fn increase_step(&mut self, amount: u16) {
         self.0.increase_step(amount);
     }
 
+    /// Forces the easing function to a specific step
     pub fn set_step(&mut self, step: u16) {
         self.0.set_step(step)
     }
 
+    /// Creates a new TimeEase
     pub fn new(
         current_step: u16,
         total_steps: u16,
@@ -107,10 +114,12 @@ impl TimeEase {
         ))
     }
 
+    /// Forcefully skips the easing process
     pub fn force_done(&mut self) {
         self.0.force_done();
     }
 
+    /// Changes the final value
     pub fn set_end_val(&mut self, end_val: f32) {
         self.0.set_end_val(end_val);
     }

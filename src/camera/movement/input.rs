@@ -14,6 +14,7 @@ impl Plugin for InputMovementPlugin {
     }
 }
 
+/// This System moves the camera according to user input
 fn handle_input(
     camera_speed: Res<CameraSpeed>,
     player_input: Res<PlayerInput>,

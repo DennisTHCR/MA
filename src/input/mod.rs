@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+/// The Plugin containing everything related to input handling
 pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
@@ -9,6 +10,7 @@ impl Plugin for InputPlugin {
     }
 }
 
+/// A System that reads out the input resources
 pub fn handle_input(
     kb: Res<ButtonInput<KeyCode>>,
     mouse: Res<ButtonInput<MouseButton>>,
@@ -36,6 +38,7 @@ pub fn handle_input(
     player_input.right_click_held = mouse.pressed(MouseButton::Right);
 }
 
+/// The Resource holding all relevant input information
 #[allow(unused)]
 #[derive(Resource, Default, Clone, Copy)]
 pub struct PlayerInput {

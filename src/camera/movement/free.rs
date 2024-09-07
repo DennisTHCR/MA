@@ -1,11 +1,6 @@
 use crate::utilities::easing::{EasingFunction, EasingType, TimeEase};
 use bevy::prelude::*;
 
-/// Component to mark entity as using `Free` `MovementMode`
-#[allow(unused)]
-#[derive(Component)]
-struct FreeMarker;
-
 #[derive(Component)]
 pub struct StartGoalTransform {
     start_transform: Transform,
@@ -26,11 +21,10 @@ impl StartGoalTransform {
     }
 }
 
-/// Bundle containing everything the `Free` `MovementMode` needs.
+/// Bundle containing everything the `Free` `MovementMode` needs
 #[allow(unused)]
 #[derive(Bundle)]
 struct FreeBundle {
-    free_marker: FreeMarker,
     time_ease: TimeEase,
     start_goal_transform: StartGoalTransform,
 }
@@ -44,7 +38,7 @@ impl Default for FreeBundle {
     }
 }
 
-/// System that moves entities along their path.
+/// System that moves entities along their path
 pub fn free_movement_system(mut query: Query<(&TimeEase, &StartGoalTransform, &mut Transform)>) {
     query
         .iter_mut()

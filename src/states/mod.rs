@@ -8,6 +8,7 @@ use crate::input::{handle_input, PlayerInput};
 use editing::EditingPlugin;
 use playing::PlayingPlugin;
 
+/// The Plugin containing everything related to the [AppState] enum
 pub struct StatePlugin;
 
 impl Plugin for StatePlugin {
@@ -20,6 +21,7 @@ impl Plugin for StatePlugin {
     }
 }
 
+/// The enum that defines all possible states of this app
 #[derive(States, Default, Debug, Hash, Eq, PartialEq, Clone, Copy)]
 pub enum AppState {
     #[default]
@@ -28,10 +30,12 @@ pub enum AppState {
     Editing,
 }
 
+/// This System is run on startup and sets the initial [AppState]
 fn init(mut next_state: ResMut<NextState<AppState>>) {
     next_state.set(AppState::Playing);
 }
 
+/// This System updates the current [AppState], if the G button was just pressed down
 fn state_transition(
     inputs: Res<PlayerInput>,
     state: Res<State<AppState>>,

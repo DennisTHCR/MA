@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::write;
 
+/// The Plugin containing everything related to [AppState::Editing]
 pub struct EditingPlugin;
 
 impl Plugin for EditingPlugin {
@@ -29,12 +30,15 @@ impl Plugin for EditingPlugin {
     }
 }
 
+/// This Component marks the spawn indicator Entity that is created in [enter_editing]
 #[derive(Component)]
 struct SpawnIndicatorMarker;
 
+/// This Component marks the death line Entity that is created in [enter_editing]
 #[derive(Component)]
 struct DeathLineMarker;
 
+/// This Resource saves all data needed for the hovering preview block in [AppState::Editing]
 #[derive(Resource)]
 pub struct HoveringBlock {
     pub last_hovered: (i32, i32),
@@ -54,6 +58,7 @@ impl Default for HoveringBlock {
     }
 }
 
+/// This System updates the hovering preview blocks location to follow the players cursor on every update
 fn move_block_to_cursor(
     camera_query: Query<(&Camera, &GlobalTransform)>,
     windows: Query<&Window>,
@@ -93,6 +98,7 @@ fn move_block_to_cursor(
     }
 }
 
+/// This System places down a block, if the left mouse button was just pressed down
 fn place_block(
     input: Res<PlayerInput>,
     mut level: ResMut<Level>,
@@ -109,6 +115,7 @@ fn place_block(
     hovering_block.original_material = hovering_block.selected_material;
 }
 
+/// This System changes the block type stored in the [HoveringBlock] Resource, if the right mouse button was just pressed down
 fn change_block_type(
     mut hovering_block: ResMut<HoveringBlock>,
     input: Res<PlayerInput>,
@@ -131,6 +138,7 @@ fn change_block_type(
     }
 }
 
+/// This System is run whenever the [AppState] changes to [AppState::Editing] and prepares everything required
 fn enter_editing(
     mut meshes: ResMut<Assets<Mesh>>,
     mut query: Query<&mut MovementMode, With<CameraMarker>>,
@@ -164,6 +172,36 @@ fn enter_editing(
     ));
 }
 
+/// This System is run whenever the [AppState] changes from [AppState::Editing] and cleans up everything unnescessary
+fn exit_editing(
+    spawn_indicator: Query<Entity, With<SpawnIndicatorMarker>>,
+    death_marker: Query<Entity, With<DeathLineMarker>>,
+    mut commands: Commands,
+    hovering_block: Res<HoveringBlock>,
+    mut level: ResMut<Level>,
+) {
+    commands.entity(spawn_indicator.single()).despawn();
+    commands.entity(death_marker.single()).despawn();
+    level.insert(hovering_block.hovering, hovering_block.original_material);
+    let container = SerdeMapContainer {
+        map: level.material_map.clone(),
+    };
+    let serialized = match serde_json::to_string(&container) {
+        Ok(data) => data,
+        Err(e) => {
+            eprint!("{e}");
+            String::new()
+        }
+    };
+    println!("{serialized}");
+    if let Err(e) = write("assets/level.json", serialized) {
+        eprintln!("Failed to save level: {}", e);
+    } else {
+        println!("Successfully saved!")
+    }
+}
+
+/// This Module allows for serialization and deserialization of `[(i32, i32)]` [HashMap]s
 mod tuple_map {
     use super::*;
     use serde::{Deserializer, Serializer};
@@ -207,36 +245,9 @@ mod tuple_map {
     }
 }
 
+/// This Struct exists only for Serialization/Deserialization, since a wrapper is needed.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SerdeMapContainer {
     #[serde(with = "tuple_map")]
     pub map: HashMap<(i32, i32), Material>,
-}
-
-fn exit_editing(
-    spawn_indicator: Query<Entity, With<SpawnIndicatorMarker>>,
-    death_marker: Query<Entity, With<DeathLineMarker>>,
-    mut commands: Commands,
-    hovering_block: Res<HoveringBlock>,
-    mut level: ResMut<Level>,
-) {
-    commands.entity(spawn_indicator.single()).despawn();
-    commands.entity(death_marker.single()).despawn();
-    level.insert(hovering_block.hovering, hovering_block.original_material);
-    let container = SerdeMapContainer {
-        map: level.material_map.clone(),
-    };
-    let serialized = match serde_json::to_string(&container) {
-        Ok(data) => data,
-        Err(e) => {
-            eprint!("{e}");
-            String::new()
-        }
-    };
-    println!("{serialized}");
-    if let Err(e) = write("assets/level.json", serialized) {
-        eprintln!("Failed to save level: {}", e);
-    } else {
-        println!("Successfully saved!")
-    }
 }

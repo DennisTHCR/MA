@@ -9,7 +9,7 @@ use movement::{
 };
 use zoom::ZoomPlugin;
 
-/// Plugin that handles everything related to managing the camera.
+/// Plugin that handles everything related to managing the camera
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -35,6 +35,7 @@ impl Plugin for CameraPlugin {
     }
 }
 
+/// Sets up the camera
 fn setup(
     camera_settings: Res<CameraSettings>,
     mut time_ease: Query<&mut TimeEase, With<CameraMarker>>,
@@ -46,9 +47,10 @@ fn setup(
 
 // Structs
 
-/// Marks the main camera.
+/// Marks the main camera
 #[derive(Component)]
 pub struct CameraMarker;
 
+/// Defines the cameras speed
 #[derive(Resource)]
 pub struct CameraSpeed(pub f32);

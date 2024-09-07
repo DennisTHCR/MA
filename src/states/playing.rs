@@ -15,6 +15,7 @@ use crate::{
 
 use super::AppState;
 
+/// The Plugin containing everything related to [AppState::Playing]
 pub struct PlayingPlugin;
 
 impl Plugin for PlayingPlugin {
@@ -24,6 +25,7 @@ impl Plugin for PlayingPlugin {
     }
 }
 
+/// This System is run whenever the [AppState] changes from [AppState::Playing] and cleans up everything unnescessary
 fn exit_playing(
     mut commands: Commands,
     cameras: Query<Entity, With<CameraMarker>>,
@@ -35,6 +37,7 @@ fn exit_playing(
     commands.entity(player.single()).despawn();
 }
 
+/// This System is run whenever the [AppState] changes to [AppState::Playing] and prepares everything required
 fn enter_playing(
     mut commands: Commands,
     cameras: Query<Entity, With<CameraMarker>>,

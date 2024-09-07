@@ -8,6 +8,7 @@ use crate::{
 
 use super::PlayerMarker;
 
+/// A Plugin for managing the player animation
 pub struct PlayerAnimationPlugin;
 
 impl Plugin for PlayerAnimationPlugin {
@@ -16,6 +17,7 @@ impl Plugin for PlayerAnimationPlugin {
     }
 }
 
+/// A System that changes the players animation, depending on state
 fn animate_player(
     player_input: Res<PlayerInput>,
     player_animation_map: Res<PlayerAnimationMap>,

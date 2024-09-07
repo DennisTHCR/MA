@@ -6,6 +6,7 @@ use bevy_rapier2d::geometry::Collider;
 use std::collections::{HashMap, HashSet};
 use std::fs::read_to_string;
 
+/// The Plugin containing everything related to the [Level]
 pub struct LevelManagementPlugin;
 
 impl Plugin for LevelManagementPlugin {
@@ -22,6 +23,7 @@ impl Plugin for LevelManagementPlugin {
     }
 }
 
+/// A Resource containing all runtime data for the Level
 #[derive(Resource, Debug)]
 pub struct Level {
     pub material_map: HashMap<(i32, i32), Material>,
@@ -31,6 +33,7 @@ pub struct Level {
     pub texture_update_queue: HashSet<(i32, i32)>,
 }
 
+/// Helper function to load the level from its file
 fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock>) {
     let json = read_to_string("assets/level.json");
     if !json.is_err() {
@@ -49,6 +52,7 @@ fn load_level(mut level: ResMut<Level>, mut hovering_block: ResMut<HoveringBlock
     }
 }
 
+/// System that executes all deferred actions related to the [Level]
 pub fn execute_level_queues(
     mut commands: Commands,
     mut level: ResMut<Level>,
@@ -120,6 +124,7 @@ pub fn execute_level_queues(
 }
 
 impl Level {
+    /// Adds or changes the Material at the given location
     pub fn insert(&mut self, position: (i32, i32), material: Option<Material>) {
         if material.is_none() {
             self.remove(position);
@@ -133,12 +138,13 @@ impl Level {
         }
     }
 
-    #[allow(unused_variables)]
+    /// Removes the Material at the given location
     pub fn remove(&mut self, (x, y): (i32, i32)) {
         self.material_map.remove(&(x, y));
         self.level_despawn_queue.insert((x, y));
     }
 
+    /// Helper function for grid
     pub fn get_row(&self, (x, y): (i32, i32)) -> Row {
         if self.material_map.get(&(x, y)).is_none() {
             return Row::TOP;
@@ -170,6 +176,7 @@ impl Level {
         };
     }
 
+    /// Helper function for grid
     pub fn get_column(&self, (x, y): (i32, i32)) -> Column {
         if self.material_map.get(&(x, y)).is_none() {
             return Column::LEFT;
