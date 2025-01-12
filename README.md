@@ -13,6 +13,6 @@ If there is no release for your platform (e.g. MacOS x64/ARM64), you will need t
 4. Find your target folder in the `target` folder
 5. Copy the contents of your architectures folder, as well as the `assets` folder from the repository's root, to a new folder, from which you'd like to run the game.
 
-**Sharing Levels**
+**Sharing Levels**<br>
 The level data is saved in the file `assets/level.json`. Send this file to the person you'd like to share the level with and have them drag it into their `asset` folder.<br>
 **THIS WILL OVERWRITE THEIR CURRENT LEVEL. MAKE SURE TO BACK UP YOUR LEVEL FILE BEFORE OVERWRITING, IF YOU WANT TO KEEP IT.**
