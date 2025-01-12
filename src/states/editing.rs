@@ -233,7 +233,6 @@ fn exit_editing(
             String::new()
         }
     };
-    println!("{serialized}");
     if let Err(e) = write("assets/level.json", serialized) {
         eprintln!("Failed to save level: {}", e);
     } else {

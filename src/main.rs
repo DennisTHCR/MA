@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 mod camera;
 mod config;
 mod game_logic;
