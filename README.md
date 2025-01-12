@@ -1,9 +1,8 @@
 # Installation instructions
-Depending on your platform, you have multiple options to download and run this game.<br>
-If you can find a fitting binary release for your platform, it is easiest to use that.<br>
-If there is no release for your platform (e.g. MacOS x64/ARM64), you will need to compile the program yourself.<br>
+Binary releases are available for Windows.<br>
+If you use another platform, you will need to compile the program yourself.<br>
 **Using Binary Releases**
-1. Download the matching zip for your operating system and architecture.
+1. Download the matching zip for your architecture.
 2. Unzip all files inside to the location from which you'd like to run the game.
 
 **Compilation Instructions**
