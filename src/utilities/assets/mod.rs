@@ -6,6 +6,7 @@ use strum_macros::{AsRefStr, EnumIter};
 
 use crate::{player::PlayerMarker, states::AppState};
 
+/// The Plugin containing everything related to assets
 pub struct AssetPlugin;
 
 impl Plugin for AssetPlugin {
@@ -15,6 +16,7 @@ impl Plugin for AssetPlugin {
     }
 }
 
+/// The enum that defines all materials available
 #[allow(non_camel_case_types)]
 #[derive(
     Component,
@@ -48,6 +50,7 @@ impl Material {
     }
 }
 
+/// A list defining what [Material]s have a 2x2 grid, instead of a 3x3 one
 pub const SMALL_MATERIALS: [Material; 4] = [
     Material::WOOD,
     Material::STEEL,
@@ -55,6 +58,7 @@ pub const SMALL_MATERIALS: [Material; 4] = [
     Material::GOLD,
 ];
 
+/// This Resource saves a reference to all images loaded and saves them in a hashmap
 #[derive(Resource)]
 pub struct ImageHandles(pub HashMap<(Material, Row, Column), Handle<Image>>);
 
@@ -64,6 +68,7 @@ impl Default for ImageHandles {
     }
 }
 
+/// This enum defines all possible row states a block could be in
 #[derive(
     Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
 )]
@@ -73,6 +78,7 @@ pub enum Row {
     BOTTOM,
 }
 
+/// This enum defines all possible column states a block could be in
 #[derive(
     Component, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
 )]
@@ -82,6 +88,7 @@ pub enum Column {
     RIGHT,
 }
 
+/// This System is run on startup and loads all needed assets
 pub fn init(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -148,17 +155,21 @@ pub fn init(
     )));
 }
 
+/// A Resource containing references to colored materials
 #[derive(Resource)]
 pub struct ColorResource(pub [(Handle<ColorMaterial>, String, Color); 2]);
 
+/// A map containing the players animation frames
 #[derive(Resource)]
 pub struct PlayerAnimationMap(pub HashMap<PlayerAnimationState, PlayerAnimation>);
 
+/// A struct that defines what is needed for a player animation
 pub struct PlayerAnimation {
     pub texture_atlas_layout: Handle<TextureAtlasLayout>,
     pub texture: Handle<Image>,
 }
 
+/// This enum describes all states the player could be in
 #[derive(
     Resource, Hash, Ord, PartialOrd, PartialEq, Eq, Copy, Clone, EnumIter, AsRefStr, Debug,
 )]
@@ -169,15 +180,18 @@ pub enum PlayerAnimationState {
     RUN,
 }
 
+/// A Resource that keeps track of the current player animations size
 #[derive(Resource)]
 pub struct PlayerAnimationIndices {
     pub first: usize,
     pub last: usize,
 }
 
+/// A Resource that keeps track of whether the next animation frame should be rendered or not
 #[derive(Resource, Deref, DerefMut)]
 pub struct PlayerAnimationTimer(Timer);
 
+/// This System updates the player animations, if the [PlayerAnimationTimer] is expired
 fn animate_sprite(
     time: Res<Time>,
     mut timer: ResMut<PlayerAnimationTimer>,

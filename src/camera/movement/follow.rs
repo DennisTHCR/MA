@@ -12,7 +12,7 @@ impl FollowMarker {
     }
 }
 
-/// Component to mark the entity to follow. i32 is used as ID to link for following entities.
+/// Component to mark the entity to follow. [Target] enum is used as ID to link for following entities
 #[derive(Component, Clone, Copy)]
 pub struct TargetMarker(Target);
 
@@ -27,7 +27,7 @@ pub enum Target {
     Player,
 }
 
-/// System that pulls the following entity towards its target. Speed depends on delta transform.
+/// System that pulls the following entity towards its target. Speed depends on delta transform
 pub fn following_movement_system(
     mut follower: Query<(&FollowMarker, &mut Transform), Without<TargetMarker>>,
     target: Query<(&TargetMarker, &Transform), Without<FollowMarker>>,

@@ -1,58 +1,96 @@
 :root {
-    --main-background-color: #1e1e2e;
-    --main-color: #cdd6f4;
-    --settings-input-color: #cba6f7;
-    --settings-input-border-color: #cba6f7;
-    --settings-button-color: #11111b;
-    --settings-button-border-focus: #cba6f7;
-    --sidebar-background-color: #313244;
-    --sidebar-background-color-hover: #1e1e2e;
-    --code-block-background-color: #181825;
-    --scrollbar-track-background-color: #45475a;
-    --scrollbar-thumb-background-color: #313244;
-    --scrollbar-color: #313244 #45475a;
-    --headings-border-bottom-color: #cdd6f4;
-    --border-color: #313244;
-    --button-background-color: #cdd6f4;
-    --search-input-focused-border-color: #cba6f7;
-    --copy-path-button-color: #6c7086;
-    --warning-border-color: #fab387;
-    --type-link-color: #74c7ec;
-    --trait-link-color: #cba6f7;
-    --assoc-item-link-color: #fab387;
-    --function-link-color: #94e2d5;
-    --macro-link-color: #a6e3a1;
-    --keyword-link-color: #eba0ac;
-    --mod-link-color: #cba6f7;
-    --link-color: #cba6f7;
-    --sidebar-link-color: #cba6f7;
-    --search-result-link-focus-background-color: #313244;
-    --search-result-border-color: #1e1e2e;
-    --search-color: #cdd6f4;
-    --search-error-code-background-color: #1e1e2e;
-    --search-results-alias-color: #cdd6f4;
-    --search-results-grey-color: #bac2de;
-    --search-tab-title-count-color: #bac2de;
-    --search-tab-button-not-selected-border-top-color: #1e1e2e;
-    --search-tab-button-not-selected-background: #1e1e2e;
-    --search-tab-button-selected-border-top-color: #cba6f7;
-    --search-tab-button-selected-background: #313244;
-    --stab-background-color: #1e1e2e;
-    --stab-code-color: #cdd6f4;
-    --code-highlight-kw-color: #cba6f7;
-    --code-highlight-kw-2-color: #74c7ec;
-    --code-highlight-lifetime-color: #fab387;
-    --code-highlight-prelude-color: #89dceb;
-    --code-highlight-prelude-val-color: #f38ba8;
-    --code-highlight-number-color: #a6e3a1;
-    --code-highlight-string-color: #a6e3a1;
-    --code-highlight-literal-color: #f38ba8;
-    --code-highlight-attribute-color: #f38ba8;
-    --code-highlight-self-color: #f38ba8;
-    --code-highlight-macro-color: #89b4fa;
-    --code-highlight-question-mark-color: #eba0ac;
-    --code-highlight-comment-color: #7f8a9c;
-    --code-highlight-doc-comment-color: #cdd6f4;
-    --src-line-numbers-span-color: #89b4fa;
-    --src-line-number-highlighted-background-color: #181825;
+    --main-background-color: #1e1e2e; /* Mocha - Mantle */
+    --main-color: #cdd6f4; /* Mocha - Text */
+    --settings-input-color: #f5e0dc; /* Mocha - Rosewater */
+    --settings-input-border-color: #585b70; /* Mocha - Surface2 */
+    --settings-button-color: #f5c2e7; /* Mocha - Flamingo */
+    --settings-button-border-focus: #f2cdcd; /* Mocha - Pink */
+    --sidebar-background-color: #181825; /* Mocha - Base */
+    --sidebar-background-color-hover: rgba(245, 194, 231, 0.33); /* Mocha - Flamingo with opacity */
+    --code-block-background-color: #1e1e2e; /* Mocha - Mantle */
+    --scrollbar-track-background-color: transparent;
+    --scrollbar-thumb-background-color: #45475a; /* Mocha - Overlay2 */
+    --scrollbar-color: #45475a #1e1e2e; /* Mocha - Overlay2 and Mantle */
+    --headings-border-bottom-color: #f38ba8; /* Mocha - Red */
+    --border-color: #cba6f7; /* Mocha - Mauve */
+    --button-background-color: #181825; /* Mocha - Base */
+    --right-side-color: #cdd6f4; /* Mocha - Text */
+    --code-attribute-color: #cba6f7; /* Mocha - Mauve */
+    --toggles-color: #cba6f7; /* Mocha - Mauve */
+    --toggle-filter: invert(100%);
+    --mobile-sidebar-menu-filter: invert(100%);
+    --search-input-focused-border-color: #cba6f7; /* Mocha - Mauve */
+    --copy-path-button-color: #fff;
+    --copy-path-img-filter: invert(70%);
+    --copy-path-img-hover-filter: invert(100%);
+    --codeblock-error-hover-color: rgb(255,0,0);
+    --codeblock-error-color: rgba(255,0,0,.5);
+    --codeblock-ignore-hover-color: rgb(255,142,0);
+    --codeblock-ignore-color: rgba(255,142,0,.6);
+    --warning-border-color: #ff8e00;
+    --type-link-color: #cba6f7; /* Mocha - Mauve */
+    --trait-link-color: #89b4fa; /* Mocha - Blue */
+    --assoc-item-link-color: #89b4fa; /* Mocha - Blue */
+    --function-link-color: #f9e2af; /* Mocha - Yellow */
+    --macro-link-color: #cba6f7; /* Mocha - Mauve */
+    --keyword-link-color: #89b4fa; /* Mocha - Blue */
+    --mod-link-color: #89b4fa; /* Mocha - Blue */
+    --link-color: #89b4fa; /* Mocha - Blue */
+    --sidebar-link-color: #cba6f7; /* Mocha - Mauve */
+    --sidebar-current-link-background-color: transparent;
+    --search-result-link-focus-background-color: #3c3c3c;
+    --search-result-border-color: #aaa3;
+    --search-color: #fff;
+    --search-error-code-background-color: #4f4c4c;
+    --search-results-alias-color: #cdd6f4; /* Mocha - Text */
+    --search-results-grey-color: #585b70; /* Mocha - Surface2 */
+    --search-tab-title-count-color: #888;
+    --search-tab-button-not-selected-border-top-color: none;
+    --search-tab-button-not-selected-background: transparent !important;
+    --search-tab-button-selected-border-top-color: none;
+    --search-tab-button-selected-background: #181825 !important; /* Mocha - Base */
+    --settings-menu-filter: invert(100%);
+    --stab-background-color: #314559; /* Custom deep color */
+    --stab-code-color: #e6e1cf; /* Mocha - Text */
+    --code-highlight-kw-color: #f38ba8; /* Mocha - Red */
+    --code-highlight-kw-2-color: #f38ba8; /* Mocha - Red */
+    --code-highlight-lifetime-color: #f38ba8; /* Mocha - Red */
+    --code-highlight-prelude-color: #94e2d5; /* Mocha - Teal */
+    --code-highlight-prelude-val-color: #f38ba8; /* Mocha - Red */
+    --code-highlight-number-color: #a6e3a1; /* Mocha - Green */
+    --code-highlight-string-color: #a6e3a1; /* Mocha - Green */
+    --code-highlight-literal-color: #f38ba8; /* Mocha - Red */
+    --code-highlight-attribute-color: #cba6f7; /* Mocha - Mauve */
+    --code-highlight-self-color: #89b4fa; /* Mocha - Blue */
+    --code-highlight-macro-color: #cba6f7; /* Mocha - Mauve */
+    --code-highlight-question-mark-color: #fab387; /* Mocha - Peach */
+    --code-highlight-comment-color: #988baa; /* Mocha - Subtext0 */
+    --code-highlight-doc-comment-color: #a1ac88;
+    --src-line-numbers-span-color: #585b70; /* Mocha - Surface2 */
+    --src-line-number-highlighted-background-color: rgba(245, 194, 231, 0.06); /* Mocha - Flamingo */
+    --target-background-color: rgba(245, 194, 231, 0.06); /* Mocha - Flamingo */
+    --target-border-color: rgba(245, 180, 195, 0.85); /* Mocha - Mauve */
+    --kbd-color: #cdd6f4; /* Mocha - Text */
+    --kbd-background: #314559; /* Custom deep color */
+    --kbd-box-shadow-color: #585b70; /* Mocha - Surface2 */
+    --rust-logo-filter: drop-shadow(1px 0 0px #cdd6f4) drop-shadow(0 1px 0 #cdd6f4) drop-shadow(-1px 0 0 #cdd6f4) drop-shadow(0 -1px 0 #cdd6f4);
+    --crate-search-div-filter: invert(41%) sepia(12%) saturate(487%) hue-rotate(171deg) brightness(94%) contrast(94%);
+    --crate-search-div-hover-filter: invert(98%) sepia(12%) saturate(81%) hue-rotate(343deg) brightness(113%) contrast(76%);
+    --crate-search-hover-border: #f2cdcd; /* Mocha - Pink */
+    --src-sidebar-background-selected: #181825; /* Mocha - Base */
+    --src-sidebar-background-hover: #181825; /* Mocha - Base */
+    --table-alt-row-background-color: #1e1e2e; /* Mocha - Mantle */
+    --codeblock-link-background: #333;
+    --scrape-example-toggle-line-background: #cba6f7; /* Mocha - Mauve */
+    --scrape-example-toggle-line-hover-background: #f5c2e7; /* Mocha - Flamingo */
+    --scrape-example-code-line-highlight: #5b3b01;
+    --scrape-example-code-line-highlight-focus: #7c4b0f;
+    --scrape-example-help-border-color: #aaa;
+    --scrape-example-help-color: #eee;
+    --scrape-example-help-hover-border-color: #fff;
+    --scrape-example-help-hover-color: #fff;
+    --scrape-example-code-wrapper-background-start: rgba(30, 30, 46, 1); /* Mocha - Mantle */
+    --scrape-example-code-wrapper-background-end: rgba(30, 30, 46, 0);
+    --sidebar-resizer-hover: #cba6f7; /* Mocha - Mauve */
+    --sidebar-resizer-active: #f5c2e7; /* Mocha - Flamingo */
 }

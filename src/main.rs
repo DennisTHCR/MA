@@ -21,6 +21,7 @@ use player::PlayerPlugin;
 use states::StatePlugin;
 use utilities::UtilitiesPlugin;
 
+/// Starts the App
 fn main() {
     App::new()
         .add_plugins((

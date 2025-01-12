@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinCrouch, prelude::*};
 use bevy_tnua_rapier2d::*;
 
+/// The Plugin that implements movement for the player
 pub struct PlayerMovementPlugin;
 
 impl Plugin for PlayerMovementPlugin {
@@ -16,6 +17,7 @@ impl Plugin for PlayerMovementPlugin {
     }
 }
 
+/// A system that moves the player according to [bevy_tnua] and [bevy_tnua_rapier2d]
 fn apply_movement(
     ccs: Res<CharacterControllerSettings>,
     mut query: Query<(&mut TnuaController, &Speed, &JumpHeight, &mut Sprite)>,

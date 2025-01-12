@@ -3,6 +3,7 @@ use bevy_tnua::prelude::TnuaBuiltinWalk;
 
 use crate::player::{JumpHeight, PlayerBundle, Speed};
 
+/// The Plugin that allows for configuration
 pub struct ConfigPlugin;
 
 impl Plugin for ConfigPlugin {
@@ -14,6 +15,7 @@ impl Plugin for ConfigPlugin {
     }
 }
 
+/// The Resource that configures the Character Controller
 #[derive(Resource)]
 pub struct CharacterControllerSettings {
     pub builtin_walk: TnuaBuiltinWalk,
@@ -33,6 +35,7 @@ impl Default for CharacterControllerSettings {
     }
 }
 
+/// The Resource that configures the player
 #[derive(Resource)]
 pub struct PlayerSettings {
     pub player_bundle: PlayerBundle,
@@ -55,6 +58,7 @@ impl Default for PlayerSettings {
     }
 }
 
+/// The Resource that configures the level
 #[derive(Resource)]
 pub struct LevelSettings {
     pub death_height: f32,
@@ -70,6 +74,7 @@ impl Default for LevelSettings {
     }
 }
 
+/// The Resource that configures the camera
 #[derive(Resource)]
 pub struct CameraSettings {
     pub default_zoom: f32,

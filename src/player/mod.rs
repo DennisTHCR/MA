@@ -6,6 +6,7 @@ use animation::PlayerAnimationPlugin;
 use bevy::prelude::*;
 use movement::PlayerMovementPlugin;
 
+/// A Plugin containing everything related to the player
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -15,6 +16,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
+/// A Bundle containing everything needed by the player entity
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub marker: PlayerMarker,
@@ -36,9 +38,14 @@ impl Default for PlayerBundle {
     }
 }
 
+/// A Marker to identify the player
 #[derive(Component, Clone, Copy)]
 pub struct PlayerMarker;
+
+/// The Component that defines the players jump height
 #[derive(Component, Clone, Copy)]
 pub struct JumpHeight(pub f32);
+
+/// The Component that defines the players speed
 #[derive(Component, Clone, Copy)]
 pub struct Speed(pub f32);
