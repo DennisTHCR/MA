@@ -14,4 +14,12 @@ If you use another platform, you will need to compile the program yourself.<br>
 
 **Sharing Levels**<br>
 The level data is saved in the file `assets/level.json`. Send this file to the person you'd like to share the level with and have them drag it into their `asset` folder.<br>
-**THIS WILL OVERWRITE THEIR CURRENT LEVEL. MAKE SURE TO BACK UP YOUR LEVEL FILE BEFORE OVERWRITING, IF YOU WANT TO KEEP IT.**
+**THIS WILL OVERWRITE THEIR CURRENT LEVEL. MAKE SURE TO BACK UP YOUR LEVEL FILE BEFORE OVERWRITING, IF YOU WANT TO KEEP IT.**<br>
+
+**Controls**<br>
+W, Space, Arrow Up = Jump<br>
+A, Arrow Left = Left<br>
+D, Arrow Right = Right<br>
+G = Mode Toggle<br>
+Left Click = Place Block<br>
+Right Click = Change Block Material<br>
